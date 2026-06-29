@@ -3,6 +3,7 @@ import PageShell from "@/components/marketing/PageShell";
 import ClientAdder from "@/components/agents/ClientAdder";
 import { readSheetTab } from "@/lib/gviz";
 import { overdueClients } from "@/lib/reengagement";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Re-engagement — JIDOKA Cosmetics OS",
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function ClientsPage() {
-  const rows = await readSheetTab("Clients");
+  const session = await requireSession();
+  const allRows = await readSheetTab("Clients");
+  const rows = allRows.filter((r) => (r.Salon || "").trim().toLowerCase() === session.salon.trim().toLowerCase());
   const due = overdueClients(rows);
 
   return (

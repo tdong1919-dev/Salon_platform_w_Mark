@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/marketing/PageShell";
 import PromotionBuilder from "@/components/agents/PromotionBuilder";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Rewards & promotions — JIDOKA Cosmetics OS",
   description: "Build and schedule rewards and promotions — birthdays, Mother's Day, holidays, win-backs — targeted to the right clients.",
 };
 
-export default function PromotionsPage() {
+export default async function PromotionsPage() {
+  await requireSession();
   return (
     <PageShell
       eyebrow="Growth · Rewards & promotions"

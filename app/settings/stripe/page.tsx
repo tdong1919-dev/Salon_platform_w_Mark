@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageShell from "@/components/marketing/PageShell";
 import { readSheetTab } from "@/lib/gviz";
 import { connectConfigured } from "@/lib/stripe";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Connect Stripe — JIDOKA Cosmetics OS",
@@ -17,12 +18,15 @@ export default async function StripeSettingsPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const session = await requireSession();
   const sp = await searchParams;
   const status = typeof sp.status === "string" ? sp.status : "";
   const configured = connectConfigured();
 
   const rows = await readSheetTab("Stripe");
-  const connected = rows.filter((r) => (r["Account ID"] || "").startsWith("acct_"));
+  const connected = rows.filter(
+    (r) => (r["Account ID"] || "").startsWith("acct_") && (r.Salon || "").trim().toLowerCase() === session.salon.trim().toLowerCase(),
+  );
 
   return (
     <PageShell
@@ -55,12 +59,10 @@ export default async function StripeSettingsPage({
         </div>
       ) : (
         <form action="/api/stripe/connect" method="GET" className="rounded-xl border border-border bg-surface p-6 space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input className={inputClass} name="salon" placeholder="Salon / business name" aria-label="Salon name" required />
-            <input className={inputClass} name="email" type="email" placeholder="Billing email" aria-label="Email" />
-          </div>
+          <input type="hidden" name="salon" value={session.salon} />
+          <input className={inputClass} name="email" type="email" defaultValue={session.email} placeholder="Billing email" aria-label="Email" />
           <button type="submit" className="rounded-sm bg-gradient-brand px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-white">
-            Connect with Stripe
+            Connect {session.salon || "your salon"} with Stripe
           </button>
           <p className="text-xs text-text-muted">You&apos;ll be sent to Stripe to sign in and approve — then back here.</p>
         </form>

@@ -4,12 +4,16 @@
  * when to compute payroll/commissions (done deterministically in code, never by
  * the model) and when to persist records to the salon's Google Sheet.
  *
+ * Requires a signed-in session; the salon is taken from the session (not the
+ * client) so writes are scoped to the right salon.
+ *
  * Request:  { messages: [{ role: "user" | "assistant", content: string }] }
  * Response: { reply: string }  (or { error } on failure)
  */
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { appendSheetRow } from "@/lib/sheets";
+import { getSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -85,7 +89,7 @@ const TOOLS: Anthropic.Tool[] = [
   },
 ];
 
-async function runTool(name: string, input: Record<string, unknown>): Promise<unknown> {
+async function runTool(name: string, input: Record<string, unknown>, salon: string): Promise<unknown> {
   if (name === "calculate_payroll") {
     const entries = (input.entries as Entry[]) ?? [];
     const period = (input.period as string) ?? new Date().toISOString().slice(0, 10);
@@ -115,11 +119,11 @@ async function runTool(name: string, input: Record<string, unknown>): Promise<un
 
     let saved: { ok: boolean; error?: string } | undefined;
     if (save) {
-      const headers = ["Period", "Name", "Service revenue", "Tips", "Hours", "Commission", "Hourly pay", "Gross pay", "Logged"];
+      const headers = ["Salon", "Period", "Name", "Service revenue", "Tips", "Hours", "Commission", "Hourly pay", "Gross pay", "Logged"];
       const now = new Date().toISOString();
       for (const r of rows) {
         saved = await appendSheetRow("Payroll", headers, [
-          period, r.name, r.serviceRevenue, r.tips, r.hours, r.commission, r.hourlyPay, r.gross, now,
+          salon, period, r.name, r.serviceRevenue, r.tips, r.hours, r.commission, r.hourlyPay, r.gross, now,
         ]);
         if (!saved.ok) break;
       }
@@ -129,8 +133,9 @@ async function runTool(name: string, input: Record<string, unknown>): Promise<un
   }
 
   if (name === "save_staff") {
-    const headers = ["Updated", "Name", "Role", "Commission %", "Hourly rate", "Notes"];
+    const headers = ["Salon", "Updated", "Name", "Role", "Commission %", "Hourly rate", "Notes"];
     const row = [
+      salon,
       new Date().toISOString(),
       (input.name as string) ?? "",
       (input.role as string) ?? "",
@@ -151,6 +156,11 @@ export async function POST(request: NextRequest) {
       { error: "The financial agent isn't configured yet — ANTHROPIC_API_KEY is not set." },
       { status: 503 },
     );
+  }
+
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Please sign in to use the financial agent." }, { status: 401 });
   }
 
   const body = await request.json().catch(() => ({}));
@@ -182,7 +192,7 @@ export async function POST(request: NextRequest) {
         const results: Anthropic.ToolResultBlockParam[] = [];
         for (const block of resp.content) {
           if (block.type === "tool_use") {
-            const out = await runTool(block.name, block.input as Record<string, unknown>);
+            const out = await runTool(block.name, block.input as Record<string, unknown>, session.salon);
             results.push({ type: "tool_result", tool_use_id: block.id, content: JSON.stringify(out) });
           }
         }

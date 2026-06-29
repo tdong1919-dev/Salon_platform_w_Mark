@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/marketing/PageShell";
 import InventoryForm from "@/components/agents/InventoryForm";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Inventory agent — JIDOKA Cosmetics OS",
   description: "Flag low stock and let the inventory agent find the cheapest reputable place to reorder — with tax-ready categorization.",
 };
 
-export default function InventoryPage() {
+export default async function InventoryPage() {
+  await requireSession();
   return (
     <PageShell
       eyebrow="Agent · Inventory"

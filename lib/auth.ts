@@ -8,6 +8,7 @@
  */
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const MAGIC_TTL = 15 * 60 * 1000; // 15 min
 const SESSION_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -69,4 +70,11 @@ export async function getSession(): Promise<Session | null> {
   const c = await cookies();
   const token = c.get(SESSION_COOKIE)?.value;
   return token ? verifySession(token) : null;
+}
+
+/** For owner-only server components: redirect to /login when not signed in. */
+export async function requireSession(): Promise<Session> {
+  const session = await getSession();
+  if (!session) redirect("/login");
+  return session;
 }

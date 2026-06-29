@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/marketing/PageShell";
 import IntelligenceReport from "@/components/agents/IntelligenceReport";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Industry intelligence — JIDOKA Cosmetics OS",
   description: "A monthly, executive one-page briefing on what's trending and what competitors are doing in your niche.",
 };
 
-export default function IntelligencePage() {
+export default async function IntelligencePage() {
+  await requireSession();
   return (
     <PageShell
       eyebrow="Agent · Intelligence"

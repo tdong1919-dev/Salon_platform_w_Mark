@@ -6,10 +6,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { appendSheetRow } from "@/lib/sheets";
 import { sendHelpEmail } from "@/lib/notify";
+import { getSession } from "@/lib/auth";
 
-const HEADERS = ["Flagged", "Product", "On hand", "Threshold", "Vendor", "Flagged by", "Notes", "Status", "Category"];
+const HEADERS = ["Flagged", "Salon", "Product", "On hand", "Threshold", "Vendor", "Flagged by", "Notes", "Status", "Category"];
 
 export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Please sign in to manage inventory." }, { status: 401 });
+  }
   const body = await request.json().catch(() => ({}));
   const product = (body.product ?? "").trim();
   const onHand = (body.onHand ?? "").toString().trim();
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
   }
 
   const sheet = await appendSheetRow("Inventory", HEADERS, [
-    new Date().toISOString(), product, onHand, threshold, vendor, flaggedBy, notes, "needs reorder", category,
+    new Date().toISOString(), session.salon, product, onHand, threshold, vendor, flaggedBy, notes, "needs reorder", category,
   ]);
 
   const notify = await sendHelpEmail({

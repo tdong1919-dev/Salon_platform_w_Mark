@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FinancialAgent from "@/components/agents/FinancialAgent";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Financial agent — JIDOKA Cosmetics OS",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Talk to your salon's financial agent: set commission rates, run payroll, and get plain-English advice to improve your bottom line.",
 };
 
-export default function FinancialsPage() {
+export default async function FinancialsPage() {
+  await requireSession();
   return (
     <main>
       <header className="border-b border-border">

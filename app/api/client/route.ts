@@ -5,10 +5,15 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { appendSheetRow } from "@/lib/sheets";
+import { getSession } from "@/lib/auth";
 
-const HEADERS = ["Added", "Name", "Email", "Phone", "Last visit", "Service", "Interval days"];
+const HEADERS = ["Added", "Salon", "Name", "Email", "Phone", "Last visit", "Service", "Interval days"];
 
 export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Please sign in to manage clients." }, { status: 401 });
+  }
   const body = await request.json().catch(() => ({}));
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim();
@@ -22,7 +27,7 @@ export async function POST(request: NextRequest) {
   }
 
   const sheet = await appendSheetRow("Clients", HEADERS, [
-    new Date().toISOString().slice(0, 10), name, email, phone, lastVisit, service, String(intervalDays),
+    new Date().toISOString().slice(0, 10), session.salon, name, email, phone, lastVisit, service, String(intervalDays),
   ]);
 
   if (!sheet.ok) {

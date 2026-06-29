@@ -6,10 +6,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { appendSheetRow } from "@/lib/sheets";
 import { sendHelpEmail } from "@/lib/notify";
+import { getSession } from "@/lib/auth";
 
-const HEADERS = ["Created", "Name", "Type", "Offer", "Audience", "Channels", "Send date", "Status", "Notes"];
+const HEADERS = ["Created", "Salon", "Name", "Type", "Offer", "Audience", "Channels", "Send date", "Status", "Notes"];
 
 export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Please sign in to manage promotions." }, { status: 401 });
+  }
   const body = await request.json().catch(() => ({}));
   const name = (body.name ?? "").trim();
   const type = (body.type ?? "Promotion").trim();
@@ -27,7 +32,7 @@ export async function POST(request: NextRequest) {
   const status = scheduled ? "scheduled" : "draft";
 
   const sheet = await appendSheetRow("Promotions", HEADERS, [
-    new Date().toISOString(), name, type, offer, audience, channels, sendDate, status, notes,
+    new Date().toISOString(), session.salon, name, type, offer, audience, channels, sendDate, status, notes,
   ]);
 
   const notify = await sendHelpEmail({
