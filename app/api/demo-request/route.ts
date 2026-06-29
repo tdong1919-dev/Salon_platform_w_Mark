@@ -38,6 +38,10 @@ export async function POST(request: NextRequest) {
   }
 
   // 1. Append to a Google Sheet via the Apps Script webhook (if configured).
+  // Apps Script answers a successful doPost with a 302 redirect to its content
+  // host (script.googleusercontent.com). That echo step is flaky on Workspace
+  // accounts and we don't need the body — so we don't follow the redirect; the
+  // 302 itself confirms doPost executed and appended the row.
   let sheet: SinkResult = { ok: false, skipped: true }
   const webhook = process.env.SHEETS_WEBHOOK_URL
   if (webhook) {
@@ -46,8 +50,10 @@ export async function POST(request: NextRequest) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...lead, secret: process.env.SHEETS_WEBHOOK_SECRET }),
+        redirect: 'manual',
       })
-      sheet = res.ok ? { ok: true } : { ok: false, error: `Sheet ${res.status}` }
+      const accepted = res.status === 0 || (res.status >= 200 && res.status < 400)
+      sheet = accepted ? { ok: true } : { ok: false, error: `Sheet ${res.status}` }
     } catch (err) {
       sheet = { ok: false, error: err instanceof Error ? err.message : 'sheet error' }
     }
