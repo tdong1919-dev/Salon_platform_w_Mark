@@ -327,6 +327,7 @@ export default function JidokaLandingPage() {
               { href: "/reviews", label: "Reviews hub" },
               { href: "/speak-to-a-manager", label: "Speak to a manager" },
               { href: "/wallet", label: "Client wallet" },
+              { href: "/store", label: "Online store" },
               { href: "/settings/stripe", label: "Connect Stripe" },
             ].map((l) => (
               <a key={l.href} href={l.href} className="text-sm text-text-secondary hover:text-text-primary">
