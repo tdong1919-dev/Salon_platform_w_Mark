@@ -6,7 +6,7 @@
  * Shared business inputs sit above the tabs; each tab adds its own assumptions.
  * Conservative on purpose: wallet bonus credit is costed at full face value.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList,
 } from "recharts";
@@ -52,6 +52,7 @@ function Metric({ label, value, tone = "default" }: { label: string; value: stri
 const tooltipStyle = { background: "#1A1A1A", border: "1px solid #262626", borderRadius: 8, color: "#fff" };
 
 export default function SavingsCalculator() {
+  const [mounted, setMounted] = useState(false);
   const [cli, setCli] = useState(200);
   const [tic, setTic] = useState(75);
   const [vis, setVis] = useState(12);
@@ -61,6 +62,10 @@ export default function SavingsCalculator() {
   const [bonus, setBonus] = useState(10);
   const [brk, setBrk] = useState(4);
   const [tab, setTab] = useState<"fees" | "rev">("fees");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const m = useMemo(() => {
     const r = rate / 100, a = adopt / 100, f = freq / 100, b = bonus / 100, k = brk / 100;
@@ -134,17 +139,19 @@ export default function SavingsCalculator() {
             <Metric label="Over 5 years" value={fmt(m.feeSave * 5)} tone="success" />
           </div>
           <div style={{ width: "100%", height: 180 }}>
-            <ResponsiveContainer>
-              <BarChart data={feeData} layout="vertical" margin={{ left: 8, right: 48, top: 4, bottom: 4 }}>
-                <XAxis type="number" hide />
-                <YAxis type="category" dataKey="name" width={110} tick={{ fill: "#A1A1AA", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: "#ffffff0a" }} contentStyle={tooltipStyle} formatter={(value) => [fmt(Number(value)) + " / year", ""]} />
-                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={42}>
-                  {feeData.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                  <LabelList dataKey="value" position="right" formatter={(value) => fmt(Number(value))} fill="#A1A1AA" fontSize={12} />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {mounted && (
+              <ResponsiveContainer>
+                <BarChart data={feeData} layout="vertical" margin={{ left: 8, right: 48, top: 4, bottom: 4 }}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="name" width={110} tick={{ fill: "#A1A1AA", fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{ fill: "#ffffff0a" }} contentStyle={tooltipStyle} formatter={(value) => [fmt(Number(value)) + " / year", ""]} />
+                  <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={42}>
+                    {feeData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                    <LabelList dataKey="value" position="right" formatter={(value) => fmt(Number(value))} fill="#A1A1AA" fontSize={12} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
           <p className="text-xs text-text-muted mt-3 leading-relaxed">
             Card path: your rate + $0.30 per visit. Wallet path: adopters fund credit via ACH at 0.8% (capped $5/load, ~4 loads a year); the rest stay on cards.
@@ -167,16 +174,18 @@ export default function SavingsCalculator() {
             <Metric label="Net annual upside" value={fmt(m.net)} tone="brand" />
           </div>
           <div style={{ width: "100%", height: 230 }}>
-            <ResponsiveContainer>
-              <BarChart data={revData} margin={{ left: 0, right: 8, top: 16, bottom: 4 }}>
-                <XAxis dataKey="name" tick={{ fill: "#A1A1AA", fontSize: 11 }} interval={0} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#A1A1AA", fontSize: 11 }} tickFormatter={(v: number) => (v < 0 ? "-$" : "$") + Math.abs(v / 1000) + "k"} axisLine={false} tickLine={false} width={44} />
-                <Tooltip cursor={{ fill: "#ffffff0a" }} contentStyle={tooltipStyle} formatter={(value) => [fmt(Number(value)) + " / year", ""]} />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={48}>
-                  {revData.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {mounted && (
+              <ResponsiveContainer>
+                <BarChart data={revData} margin={{ left: 0, right: 8, top: 16, bottom: 4 }}>
+                  <XAxis dataKey="name" tick={{ fill: "#A1A1AA", fontSize: 11 }} interval={0} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: "#A1A1AA", fontSize: 11 }} tickFormatter={(v: number) => (v < 0 ? "-$" : "$") + Math.abs(v / 1000) + "k"} axisLine={false} tickLine={false} width={44} />
+                  <Tooltip cursor={{ fill: "#ffffff0a" }} contentStyle={tooltipStyle} formatter={(value) => [fmt(Number(value)) + " / year", ""]} />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={48}>
+                    {revData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
           <p className="text-xs text-text-muted mt-3 leading-relaxed">
             Net upside = extra-visit revenue + breakage + ACH fee savings − promo cost. Bonus credit is counted at full face value (conservative; your real cost to deliver it is lower). Prepaid balances are regulated like gift cards — many states limit expiration and require escheatment of breakage, so treat breakage as upside, not a guarantee.

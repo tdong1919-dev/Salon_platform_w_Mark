@@ -35,9 +35,15 @@ const DEFAULT_BRAND: Brand = {
 };
 
 const SERVICES = [
-  { name: "Classic full set", price: "$120" },
-  { name: "Hybrid fill", price: "$75" },
-  { name: "Lash lift & tint", price: "$95" },
+  { name: "Classic full set", price: "$120", tag: "Wallet eligible" },
+  { name: "Hybrid fill", price: "$75", tag: "8-week rebook" },
+  { name: "Lash lift & tint", price: "$95", tag: "Cross-sell brow tint" },
+];
+
+const OPS = [
+  { label: "Rewards", value: "420 pts", detail: "Next visit credit ready" },
+  { label: "Social", value: "2 posts queued", detail: "Last-minute fill openings" },
+  { label: "Stock", value: "Adhesive low", detail: "Reorder draft pending" },
 ];
 
 function initials(name: string): string {
@@ -107,11 +113,12 @@ export default function BrandThemedDemo() {
 
       <div className="rounded-2xl bg-surface p-5 flex justify-center">
         <div
-          className="w-full max-w-[340px] rounded-2xl border border-border overflow-hidden bg-surface-elevated"
+          className="w-full max-w-[680px] rounded-2xl border border-border overflow-hidden bg-surface-elevated"
           style={brand.fontFamily ? { fontFamily: `${brand.fontFamily}, var(--font-sans, sans-serif)` } : undefined}
         >
           <div className="px-5 py-4 text-white" style={{ backgroundColor: primary }}>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-full bg-white/25 flex items-center justify-center overflow-hidden text-sm font-semibold">
                 {brand.iconUrl || brand.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -128,41 +135,65 @@ export default function BrandThemedDemo() {
                 <p className="m-0 text-[15px] font-semibold leading-tight">{brand.name}</p>
                 <p className="m-0 text-[11px] opacity-85">Book your appointment</p>
               </div>
+              </div>
+              <span className="w-fit rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium">
+                Branded client wallet live
+              </span>
             </div>
           </div>
 
-          <div className="px-5 py-4">
-            {SERVICES.map((s, i) => (
-              <div
-                key={s.name}
-                className={`flex justify-between items-center py-2.5 ${i < SERVICES.length - 1 ? "border-b border-border" : ""}`}
-              >
-                <span className="text-[13px] text-text-primary">{s.name}</span>
-                <span className="text-[13px] text-text-secondary">{s.price}</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 gap-4 px-5 py-4 md:grid-cols-[1fr_0.85fr]">
+            <div>
+              {SERVICES.map((s, i) => (
+                <div
+                  key={s.name}
+                  className={`py-2.5 ${i < SERVICES.length - 1 ? "border-b border-border" : ""}`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[13px] text-text-primary">{s.name}</span>
+                    <span className="text-[13px] text-text-secondary">{s.price}</span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-text-muted">{s.tag}</p>
+                </div>
+              ))}
 
-            <div
-              className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2"
-              style={{ backgroundColor: `${accent}1f` }}
-            >
-              <span className="text-[18px]" style={{ color: accent }} aria-hidden="true">
-                ◍
-              </span>
-              <span className="text-xs text-text-secondary">
-                Wallet balance{" "}
-                <span className="font-semibold" style={{ color: accent }}>
-                  $300.00
+              <div
+                className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2"
+                style={{ backgroundColor: `${accent}1f` }}
+              >
+                <span className="text-[18px]" style={{ color: accent }} aria-hidden="true">
+                  ◍
                 </span>
-              </span>
+                <span className="text-xs text-text-secondary">
+                  Wallet balance{" "}
+                  <span className="font-semibold" style={{ color: accent }}>
+                    $300.00
+                  </span>
+                </span>
+              </div>
+
+              <button
+                className="mt-3 w-full rounded-lg py-2.5 text-sm font-semibold text-white"
+                style={{ backgroundColor: accent }}
+              >
+                Book & pay from wallet
+              </button>
             </div>
 
-            <button
-              className="mt-3 w-full rounded-lg py-2.5 text-sm font-semibold text-white"
-              style={{ backgroundColor: accent }}
-            >
-              Book & pay from wallet
-            </button>
+            <div className="rounded-xl border border-border bg-[#0f0f0f] p-3">
+              <p className="text-[11px] uppercase tracking-wide text-text-muted">Owner ops</p>
+              <div className="mt-3 space-y-2">
+                {OPS.map((item) => (
+                  <div key={item.label} className="rounded-lg bg-surface-elevated p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[12px] text-text-secondary">{item.label}</span>
+                      <span className="text-[12px] font-semibold text-text-primary">{item.value}</span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-text-muted">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

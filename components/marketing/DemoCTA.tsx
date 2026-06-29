@@ -16,14 +16,30 @@ type Props = {
 const inputClass =
   "w-full rounded-lg border border-border bg-surface-elevated px-3 py-2.5 text-sm text-text-primary outline-none focus:border-[#7b3ff2] placeholder:text-text-muted";
 
+const priorities = [
+  "Credit card transaction fees",
+  "Client retention and cross-sell",
+  "Social media scheduling",
+  "Rewards or memberships",
+  "Inventory tracking and reorder",
+];
+
 export default function DemoCTA({ label = "Book a free demo", variant = "primary", className = "" }: Props) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", salonName: "", phone: "", website: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    salonName: "",
+    phone: "",
+    website: "",
+    priority: priorities[0],
+    message: "",
+  });
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   async function submit(e: React.FormEvent) {
@@ -59,7 +75,15 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
     setTimeout(() => {
       setDone(false);
       setError(null);
-      setForm({ name: "", email: "", salonName: "", phone: "", website: "", message: "" });
+      setForm({
+        name: "",
+        email: "",
+        salonName: "",
+        phone: "",
+        website: "",
+        priority: priorities[0],
+        message: "",
+      });
     }, 200);
   }
 
@@ -100,6 +124,13 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
               <input className={inputClass} placeholder="Phone" value={form.phone} onChange={set("phone")} aria-label="Phone" />
             </div>
             <input className={inputClass} placeholder="Website or @instagram" value={form.website} onChange={set("website")} aria-label="Website or Instagram" />
+            <select className={inputClass} value={form.priority} onChange={set("priority")} aria-label="Biggest bottleneck">
+              {priorities.map((priority) => (
+                <option key={priority} value={priority}>
+                  {priority}
+                </option>
+              ))}
+            </select>
             <textarea className={`${inputClass} min-h-[80px] resize-y`} placeholder="Anything we should know? (optional)" value={form.message} onChange={set("message")} aria-label="Notes" />
             {error && <p className="text-sm text-error">{error}</p>}
             <button
