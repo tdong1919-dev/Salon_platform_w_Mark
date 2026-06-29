@@ -17,6 +17,7 @@ Environment variables). Most features degrade gracefully if a key is missing.
 | `SHEETS_SHEET_ID` | Sheet **reads** (reviews hub, complaint re-ping, client re-engagement) | the long string between `/d/` and `/edit` in your sheet URL | **NEEDED for read features** |
 | `SHEETS_WEBHOOK_SECRET` | (optional) reject unknown callers to the Apps Script | any random string (also set in the script) | optional |
 | `CRON_SECRET` | Protects `/api/complaint/reping` and `/api/reengagement/digest` | any random string | **NEEDED for crons** |
+| `AUTH_SECRET` | Passwordless sign-in (signs magic links + sessions) | any long random string (`openssl rand -base64 48`) | **NEEDED for login** |
 | `STRIPE_SECRET_KEY` | Stripe Connect (salons link their own Stripe) | Stripe dashboard → API keys (your platform account) | optional, for payments |
 | `STRIPE_CONNECT_CLIENT_ID` | Stripe Connect OAuth | Stripe dashboard → Connect → Settings (`ca_…`) | optional, for payments |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout | Stripe dashboard → API keys (`pk_…`) | optional |
@@ -68,6 +69,20 @@ So each salon's payments settle to *their* Stripe (you never hold their secret k
    ledger is sheet-based (append-only) — fine for a demo, but move the money side to a real
    database (transactions) before real volume. (No Stripe secrets are exposed either way.)
 
+## 2c. Auth (passwordless, on Sheets)
+
+Owners sign in at `/login` — no passwords. We email a 15-minute magic link
+(via Resend), and the session is a signed httpOnly cookie. The `Users` tab holds
+only email / salon / role (no secrets).
+
+To enable:
+1. Set `AUTH_SECRET` (any long random string).
+2. `SHEETS_SHEET_ID` + link-view must be on (login looks the user up via gviz).
+3. The Apps Script must be the redeployed version (writes the `Users` tab).
+4. ⚠️ **Email delivery:** with Resend's shared sender, magic links only reach the
+   address that owns your Resend account until you **verify a domain**. Verify a
+   domain in Resend before real salon owners can sign in.
+
 ## 3. Scheduled jobs (cron)
 
 Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron-job.org)
@@ -95,6 +110,7 @@ Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron
 | Page | What it does |
 |---|---|
 | `/` | Landing page, ROI calculator, brand-theming demo, demo-request capture |
+| `/login` · `/account` | Passwordless sign-in + the salon's dashboard (session-gated) |
 | `/financials` | Financial agent — commissions, payroll (deterministic), advice |
 | `/inventory` | Flag low stock + AI cheapest-reorder search; tax categories |
 | `/intelligence` | Monthly executive industry/competitor briefing |
@@ -114,7 +130,8 @@ These were in the spec but require external services, approvals, or Mark's booki
 
 | Feature | What it needs |
 |---|---|
-| **Stripe ACH client wallet** (flagship) | ✅ MVP built — Connect onboarding (`/settings/stripe`) + load/pay (`/wallet`) + webhook. Remaining for production: a real database for the money ledger (transactions, no double-spend), per-salon/per-client auth, and refunds/disputes handling |
+| **Auth + per-salon accounts** | ✅ MVP built — passwordless login (`/login`), signed sessions, salon dashboard (`/account`). Remaining: verify a Resend domain for delivery; wire the existing feature pages to read the salon from the session (instead of `?salon=` params); add roles/staff invites |
+| **Stripe ACH client wallet** (flagship) | ✅ MVP built — Connect onboarding (`/settings/stripe`) + load/pay (`/wallet`) + webhook. Remaining for production: a real database for the money ledger (transactions, no double-spend) and refunds/disputes handling |
 | **Online store** | ✅ MVP built (`/store`) — catalog + Stripe checkout to the salon. Remaining: shipping, inventory sync, order management UI |
 | **Google review auto-responder** + **review aggregation** | **Google Business Profile API** (OAuth app + Google verification/approval) |
 | **Last-minute cancellation fills (opt-in SMS)** | Booking calendar data + **Twilio** (SMS) and client opt-in storage |
