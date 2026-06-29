@@ -19,7 +19,8 @@ Environment variables). Most features degrade gracefully if a key is missing.
 | `CRON_SECRET` | Protects `/api/complaint/reping` and `/api/reengagement/digest` | any random string | **NEEDED for crons** |
 | `STRIPE_SECRET_KEY` | Stripe Connect (salons link their own Stripe) | Stripe dashboard → API keys (your platform account) | optional, for payments |
 | `STRIPE_CONNECT_CLIENT_ID` | Stripe Connect OAuth | Stripe dashboard → Connect → Settings (`ca_…`) | optional, for payments |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout (later) | Stripe dashboard → API keys (`pk_…`) | optional |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout | Stripe dashboard → API keys (`pk_…`) | optional |
+| `STRIPE_WEBHOOK_SECRET` | Crediting the wallet on load | Stripe → Developers → Webhooks (`whsec_…`) | optional, for wallet |
 | `BRANDFETCH_API_KEY` | Brand-theming demo | [developers.brandfetch.com](https://developers.brandfetch.com) | ✅ you have it |
 | `RESEND_API_KEY` | All email notifications | [resend.com](https://resend.com) | ✅ you have it |
 | `HELP_NOTIFY_EMAIL` | Inbox that receives alerts | your email | ✅ you have it |
@@ -57,10 +58,15 @@ So each salon's payments settle to *their* Stripe (you never hold their secret k
 3. Set `STRIPE_SECRET_KEY` (your platform `sk_…`) and `NEXT_PUBLIC_APP_URL`.
 4. A salon goes to `/settings/stripe`, clicks **Connect with Stripe**, signs into their
    own Stripe, and approves. We store only their `acct_…` id in a `Stripe` tab.
-5. ⚠️ Not yet built: the actual charge/wallet-load that uses the stored `acct_…`. That's
-   the ACH wallet (section 6) — Connect onboarding is the prerequisite, now done.
-   ⚠️ Multi-tenant note: there's no per-salon login yet, so treat this as owner-initiated /
-   MVP. Add auth before many independent salons self-serve. (No secrets are exposed either way.)
+5. **For the client wallet** (`/wallet`): add a Stripe **webhook** → URL
+   `https://YOUR-SITE/api/stripe/webhook`, listening for `checkout.session.completed`
+   and `checkout.session.async_payment_succeeded` (enable "listen to Connected accounts"),
+   and set `STRIPE_WEBHOOK_SECRET`. Loads credit the `Wallet` tab once payment succeeds
+   (ACH credits only after it clears).
+   ⚠️ Multi-tenant note: there's no per-salon login yet, so treat connect/wallet as
+   owner-initiated / MVP. Add auth before many independent salons self-serve. The wallet
+   ledger is sheet-based (append-only) — fine for a demo, but move the money side to a real
+   database (transactions) before real volume. (No Stripe secrets are exposed either way.)
 
 ## 3. Scheduled jobs (cron)
 
@@ -96,6 +102,8 @@ Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron
 | `/promotions` | Build & schedule rewards/promos with holiday templates |
 | `/reviews` | Central reviews wall + leave-a-review |
 | `/speak-to-a-manager` | Complaint tickets → owner alerts + 24h re-ping |
+| `/settings/stripe` | Salon connects their own Stripe (Connect OAuth) |
+| `/wallet` | Client wallet — load via ACH/card, pay from balance (no per-visit fee) |
 
 ---
 
@@ -105,7 +113,7 @@ These were in the spec but require external services, approvals, or Mark's booki
 
 | Feature | What it needs |
 |---|---|
-| **Stripe ACH client wallet** (flagship) | ✅ Connect onboarding done (`/settings/stripe`). Remaining: the charge/wallet-load that uses the stored `acct_…`, a balance ledger (a real DB is strongly recommended here, not the sheet), and client auth |
+| **Stripe ACH client wallet** (flagship) | ✅ MVP built — Connect onboarding (`/settings/stripe`) + load/pay (`/wallet`) + webhook. Remaining for production: a real database for the money ledger (transactions, no double-spend), per-salon/per-client auth, and refunds/disputes handling |
 | **Online store** | Stripe products + checkout, a product catalog |
 | **Google review auto-responder** + **review aggregation** | **Google Business Profile API** (OAuth app + Google verification/approval) |
 | **Last-minute cancellation fills (opt-in SMS)** | Booking calendar data + **Twilio** (SMS) and client opt-in storage |
