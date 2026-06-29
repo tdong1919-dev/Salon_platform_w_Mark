@@ -1,40 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  /* Core backgrounds */
-  --color-bg: #0A0A0A;
-  --color-surface: #121212;
-  --color-surface-elevated: #1A1A1A;
-  --color-border: #262626;
+  /* Light, minimal luxury palette (Crème de la Mer-inspired) */
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F6F2EC;   /* warm linen for cards/sections */
+  --color-linen: #EFE9E0;              /* photo placeholders */
+  --color-border: #E6E0D6;
 
-  /* Brand accents — pink-to-purple gradient system */
-  --color-primary: #7b3ff2;
-  --color-primary-glow: rgba(123,63,242,0.4);
-  --color-accent-purple: #7b3ff2;
-  --color-accent-pink: #f857a6;
+  /* Ink accent (used for primary buttons) */
+  --color-primary: #161615;
+  --color-accent-gold: #9A7B4F;
 
   /* Text */
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A1A1AA;
-  --color-text-muted: #6B7280;
+  --color-text-primary: #1A1815;
+  --color-text-secondary: #6E665C;
+  --color-text-muted: #A39A8D;
 
-  /* Semantic */
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
+  /* Semantic — softened for a luxury feel */
+  --color-success: #4B7A63;   /* sage */
+  --color-warning: #9C7A3C;
+  --color-error: #B05B49;     /* clay */
 
-  /* Legacy aliases kept for backward compat */
-  --color-charcoal: #0A0A0A;
-  --color-brand-purple: #7b3ff2;
-  --color-brand-pink: #f857a6;
+  /* Legacy aliases kept so existing classes resolve */
+  --color-charcoal: #FFFFFF;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
 }
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #FFFFFF;
-  --gradient-brand: linear-gradient(135deg, #f857a6, #7b3ff2);
+  --background: #FFFFFF;
+  --foreground: #1A1815;
+  --gradient-brand: #161615;
 }
 
 * { box-sizing: border-box; }
@@ -46,20 +44,21 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #262626; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #7b3ff2; }
+::-webkit-scrollbar-thumb { background: #D8D1C5; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B8AF9F; }
 
-::selection { background: rgba(123,63,242,0.25); color: #fff; }
+::selection { background: rgba(20,20,18,0.10); color: #1A1815; }
 
-/* Gradient brand utilities */
+/* Primary button = solid ink (kept under the old class name) */
 .bg-gradient-brand { background: var(--gradient-brand); }
-.text-gradient-brand {
-  background: var(--gradient-brand);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+
+/* Soft linen placeholder for photo areas */
+.photo-frame {
+  background-color: var(--color-linen);
+  background-image: linear-gradient(135deg, #F2ECE3 0%, #E9E2D6 100%);
 }

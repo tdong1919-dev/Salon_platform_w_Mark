@@ -14,7 +14,7 @@ type Props = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-border bg-surface-elevated px-3 py-2.5 text-sm text-text-primary outline-none focus:border-[#7b3ff2] placeholder:text-text-muted";
+  "w-full rounded-md border border-border bg-white px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary placeholder:text-text-muted";
 
 const priorities = [
   "Credit card transaction fees",
@@ -89,12 +89,16 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
 
   const btnClass =
     variant === "primary"
-      ? "bg-gradient-brand text-white font-semibold"
-      : "border border-border text-text-primary hover:bg-white/5";
+      ? "bg-gradient-brand text-white"
+      : "border border-text-primary/30 text-text-primary hover:bg-black/[0.04]";
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={`px-6 py-3 rounded-xl ${btnClass} ${className}`}>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`px-7 py-3.5 rounded-sm uppercase text-[12px] tracking-[0.14em] transition-colors ${btnClass} ${className}`}
+      >
         {label}
       </button>
 
@@ -104,11 +108,11 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-success/15 text-success text-2xl">
               ✓
             </div>
-            <h3 className="text-lg font-semibold mb-1">You&apos;re on the list</h3>
+            <h3 className="text-xl font-serif font-medium mb-1">You&apos;re on the list</h3>
             <p className="text-sm text-text-secondary mb-6">
               We&apos;ll reach out within one business day to set up your demo.
             </p>
-            <button onClick={close} className="px-5 py-2.5 rounded-xl border border-border text-text-primary hover:bg-white/5">
+            <button onClick={close} className="px-6 py-2.5 rounded-sm uppercase text-[12px] tracking-[0.14em] border border-text-primary/30 text-text-primary hover:bg-black/[0.04]">
               Done
             </button>
           </div>
@@ -136,7 +140,7 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-gradient-brand text-white font-semibold px-6 py-3 rounded-xl disabled:opacity-50"
+              className="w-full bg-gradient-brand text-white px-6 py-3.5 rounded-sm uppercase text-[12px] tracking-[0.14em] disabled:opacity-50"
             >
               {submitting ? "Sending…" : "Request my demo"}
             </button>

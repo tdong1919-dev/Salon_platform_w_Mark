@@ -16,3 +16,6 @@ yarn-error.log*
 .netlify
 *.tsbuildinfo
 next-env.d.ts
+
+# Local preview config
+.claude
