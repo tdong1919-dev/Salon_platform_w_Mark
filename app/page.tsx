@@ -322,6 +322,7 @@ export default function JidokaLandingPage() {
               { href: "/financials", label: "Financial agent" },
               { href: "/inventory", label: "Inventory agent" },
               { href: "/intelligence", label: "Industry intelligence" },
+              { href: "/clients", label: "Client re-engagement" },
               { href: "/promotions", label: "Rewards & promotions" },
               { href: "/reviews", label: "Reviews hub" },
               { href: "/speak-to-a-manager", label: "Speak to a manager" },
