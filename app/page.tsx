@@ -313,6 +313,27 @@ export default function JidokaLandingPage() {
           </div>
         </div>
       </Section>
+
+      <footer className="border-t border-border">
+        <Section className="py-12">
+          <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Explore the agents</p>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {[
+              { href: "/financials", label: "Financial agent" },
+              { href: "/inventory", label: "Inventory agent" },
+              { href: "/intelligence", label: "Industry intelligence" },
+              { href: "/promotions", label: "Rewards & promotions" },
+              { href: "/reviews", label: "Reviews hub" },
+              { href: "/speak-to-a-manager", label: "Speak to a manager" },
+            ].map((l) => (
+              <a key={l.href} href={l.href} className="text-sm text-text-secondary hover:text-text-primary">
+                {l.label}
+              </a>
+            ))}
+          </div>
+          <p className="mt-8 text-xs text-text-muted">JIDOKA Cosmetics OS — an agent for every salon bottleneck.</p>
+        </Section>
+      </footer>
     </main>
   );
 }
