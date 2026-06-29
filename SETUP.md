@@ -17,6 +17,9 @@ Environment variables). Most features degrade gracefully if a key is missing.
 | `SHEETS_SHEET_ID` | Sheet **reads** (reviews hub, complaint re-ping, client re-engagement) | the long string between `/d/` and `/edit` in your sheet URL | **NEEDED for read features** |
 | `SHEETS_WEBHOOK_SECRET` | (optional) reject unknown callers to the Apps Script | any random string (also set in the script) | optional |
 | `CRON_SECRET` | Protects `/api/complaint/reping` and `/api/reengagement/digest` | any random string | **NEEDED for crons** |
+| `STRIPE_SECRET_KEY` | Stripe Connect (salons link their own Stripe) | Stripe dashboard → API keys (your platform account) | optional, for payments |
+| `STRIPE_CONNECT_CLIENT_ID` | Stripe Connect OAuth | Stripe dashboard → Connect → Settings (`ca_…`) | optional, for payments |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout (later) | Stripe dashboard → API keys (`pk_…`) | optional |
 | `BRANDFETCH_API_KEY` | Brand-theming demo | [developers.brandfetch.com](https://developers.brandfetch.com) | ✅ you have it |
 | `RESEND_API_KEY` | All email notifications | [resend.com](https://resend.com) | ✅ you have it |
 | `HELP_NOTIFY_EMAIL` | Inbox that receives alerts | your email | ✅ you have it |
@@ -43,6 +46,21 @@ Environment variables). Most features degrade gracefully if a key is missing.
      reviews and the re-ping/digest crons simply find nothing.
 
 ---
+
+## 2b. Stripe Connect — let salons use their own Stripe
+
+So each salon's payments settle to *their* Stripe (you never hold their secret key):
+
+1. In your **platform** Stripe account, enable **Connect** (Dashboard → Connect).
+2. Connect → **Settings**: copy the **client id** (`ca_…`) → `STRIPE_CONNECT_CLIENT_ID`,
+   and add an **OAuth redirect URI**: `https://YOUR-SITE/api/stripe/callback`.
+3. Set `STRIPE_SECRET_KEY` (your platform `sk_…`) and `NEXT_PUBLIC_APP_URL`.
+4. A salon goes to `/settings/stripe`, clicks **Connect with Stripe**, signs into their
+   own Stripe, and approves. We store only their `acct_…` id in a `Stripe` tab.
+5. ⚠️ Not yet built: the actual charge/wallet-load that uses the stored `acct_…`. That's
+   the ACH wallet (section 6) — Connect onboarding is the prerequisite, now done.
+   ⚠️ Multi-tenant note: there's no per-salon login yet, so treat this as owner-initiated /
+   MVP. Add auth before many independent salons self-serve. (No secrets are exposed either way.)
 
 ## 3. Scheduled jobs (cron)
 
@@ -87,7 +105,7 @@ These were in the spec but require external services, approvals, or Mark's booki
 
 | Feature | What it needs |
 |---|---|
-| **Stripe ACH client wallet** (flagship) | Stripe + **Stripe Connect** account, a balance/ledger store (a real DB is strongly recommended here — not the sheet), client auth |
+| **Stripe ACH client wallet** (flagship) | ✅ Connect onboarding done (`/settings/stripe`). Remaining: the charge/wallet-load that uses the stored `acct_…`, a balance ledger (a real DB is strongly recommended here, not the sheet), and client auth |
 | **Online store** | Stripe products + checkout, a product catalog |
 | **Google review auto-responder** + **review aggregation** | **Google Business Profile API** (OAuth app + Google verification/approval) |
 | **Last-minute cancellation fills (opt-in SMS)** | Booking calendar data + **Twilio** (SMS) and client opt-in storage |
