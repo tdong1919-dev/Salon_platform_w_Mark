@@ -134,8 +134,8 @@ export default function JidokaLandingPage() {
             JIDOKA <span className="text-text-secondary">Cosmetics OS</span>
           </span>
           <div className="flex items-center gap-5">
-            <a href="/financials" className="hidden text-[12px] uppercase tracking-[0.14em] text-text-secondary hover:text-text-primary sm:inline">
-              Financial agent
+            <a href="/account" className="hidden text-[12px] uppercase tracking-[0.14em] text-text-secondary hover:text-text-primary sm:inline">
+              Sign in
             </a>
             <DemoCTA label="Book a demo" variant="outline" />
           </div>

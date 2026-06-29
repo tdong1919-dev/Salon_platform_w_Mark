@@ -45,3 +45,24 @@ export async function sendHelpEmail(ticket: TicketNotification): Promise<NotifyR
     return { ok: false, error: err instanceof Error ? err.message : 'email send error' }
   }
 }
+
+/** Email a passwordless sign-in link. */
+export async function sendMagicLink(to: string, url: string): Promise<NotifyResult> {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { ok: false, skipped: true }
+  const from = process.env.HELP_NOTIFY_FROM || 'JIDOKA Cosmetics OS <onboarding@resend.dev>'
+  const text =
+    `Sign in to JIDOKA Cosmetics OS:\n\n${url}\n\n` +
+    `This link expires in 15 minutes. If you didn't request it, you can ignore this email.`
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, subject: 'Your sign-in link', text }),
+    })
+    if (!res.ok) return { ok: false, error: `Resend ${res.status}` }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'email send error' }
+  }
+}
