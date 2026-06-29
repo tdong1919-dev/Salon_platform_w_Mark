@@ -104,6 +104,7 @@ Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron
 | `/speak-to-a-manager` | Complaint tickets → owner alerts + 24h re-ping |
 | `/settings/stripe` | Salon connects their own Stripe (Connect OAuth) |
 | `/wallet` | Client wallet — load via ACH/card, pay from balance (no per-visit fee) |
+| `/store` | Online store — sell retail products, checkout to the salon's Stripe |
 
 ---
 
@@ -114,7 +115,7 @@ These were in the spec but require external services, approvals, or Mark's booki
 | Feature | What it needs |
 |---|---|
 | **Stripe ACH client wallet** (flagship) | ✅ MVP built — Connect onboarding (`/settings/stripe`) + load/pay (`/wallet`) + webhook. Remaining for production: a real database for the money ledger (transactions, no double-spend), per-salon/per-client auth, and refunds/disputes handling |
-| **Online store** | Stripe products + checkout, a product catalog |
+| **Online store** | ✅ MVP built (`/store`) — catalog + Stripe checkout to the salon. Remaining: shipping, inventory sync, order management UI |
 | **Google review auto-responder** + **review aggregation** | **Google Business Profile API** (OAuth app + Google verification/approval) |
 | **Last-minute cancellation fills (opt-in SMS)** | Booking calendar data + **Twilio** (SMS) and client opt-in storage |
 | **Upsell cues** | Per-client visit/POS history (comes from the booking system) |
