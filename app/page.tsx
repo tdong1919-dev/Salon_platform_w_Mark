@@ -2,50 +2,107 @@ import SavingsCalculator from "@/components/marketing/SavingsCalculator";
 import BrandThemedDemo from "@/components/marketing/BrandThemedDemo";
 import DemoCTA from "@/components/marketing/DemoCTA";
 
-const FEATURES = [
+const BOTTLENECKS = [
+  "Merchant fees skimming every sale",
+  "Too many disconnected tech tools",
+  "Inventory always running low",
+  "Payroll & commission math",
+  "Falling behind on social media",
+  "Hard to keep up with trends",
+  "Lapsed clients quietly slipping away",
+  "Upsells the team forgets to make",
+  "Last-minute cancellations left unfilled",
+  "Retail & at-home sales left on the table",
+  "Complaints with nowhere to go",
+  "Google reviews going unanswered",
+  "Reviews scattered across sites",
+  "Rewards & promos too manual to run",
+];
+
+const PILLARS = [
   {
-    label: "Lower transaction costs",
-    title: "ACH wallet at checkout",
-    body: "Move regulars from card swipes to prepaid wallet loads, while keeping card fallback for guests.",
-    metric: "Up to 70% fee reduction",
+    name: "Payments & financials",
+    items: [
+      {
+        title: "Stripe wallet checkout",
+        body: "Prepaid client wallets, powered by Stripe, move regulars off card swipes and cut merchant fees — with cards kept as a guest fallback.",
+      },
+      {
+        title: "Financial agent",
+        body: "Chat to update commissions, run payroll, and review your numbers — plus monthly, plain-English advice on lifting your bottom line.",
+      },
+    ],
   },
   {
-    label: "Retention and cross-sell",
-    title: "Next-best-offer engine",
-    body: "Trigger rebooking, memberships, packages, and add-ons from visit history and service timing.",
-    metric: "+1 visit per loyal client",
+    name: "Inventory & operations",
+    items: [
+      {
+        title: "Inventory agent",
+        body: "Staff flag a low product; the agent alerts whoever orders, scans reputable suppliers for the best price (logging into your vendor accounts when needed), and files each order as COGS or Supplies for easy taxes.",
+      },
+      {
+        title: "One customizable platform",
+        body: "Every tool in a single place — no relearning ten apps. Add or remove modules so the OS fits your salon, not the other way around.",
+      },
+      {
+        title: "Online store",
+        body: "Sell at-home products online to extend the salon experience, and ring up retail in-salon from the same catalog.",
+      },
+    ],
   },
   {
-    label: "Marketing on autopilot",
-    title: "Social offer calendar",
-    body: "Turn openings, seasonal services, and quiet days into ready-to-post, on-brand campaigns.",
-    metric: "Fewer empty chairs",
+    name: "Marketing & intelligence",
+    items: [
+      {
+        title: "Growth suite",
+        body: "Smart scheduling, analytics, Brand Brain, and comment-to-DM automation — all in your brand. (TikTok & LinkedIn coming soon.)",
+      },
+      {
+        title: "Industry intelligence agent",
+        body: "A monthly, executive one-page report on what's trending and what competitors are doing in your exact niche — informed by your Brand Brain and services.",
+      },
+      {
+        title: "Rewards & promotions",
+        body: "Build and schedule programs — birthdays, Mother's Day, major holidays — and target the right clients with the right offer automatically.",
+      },
+    ],
   },
   {
-    label: "Never miss a call",
-    title: "AI voice receptionist",
-    body: "An AI agent answers, books, reschedules, and fills cancellations around the clock.",
-    metric: "24/7 front desk",
-  },
-  {
-    label: "Inventory and reorder",
-    title: "Agentic stock assistant",
-    body: "Track product use through POS, flag low stock, and draft reorder carts before shelves run dry.",
-    metric: "No surprise stockouts",
-  },
-  {
-    label: "One calendar",
-    title: "Booking & POS in one",
-    body: "Appointments, staff, deposits, and checkout in a single themed experience your clients love.",
-    metric: "Fewer vendors",
+    name: "Clients & retention",
+    items: [
+      {
+        title: "Re-engagement agent",
+        body: "A daily list of clients overdue for each service, pulled from their portal — visit history, payments, reviews, and files, all in one place.",
+      },
+      {
+        title: "Upsell cues",
+        body: "Your team is notified the moment a client is a strong candidate for an upgrade, add-on, or retail product.",
+      },
+      {
+        title: "Last-minute fills",
+        body: "Clients opt in to be alerted of openings within 24 hours, by app or SMS — so cancellations don't stay empty.",
+      },
+      {
+        title: "Speak to a manager",
+        body: "Clients file complaints in-app instead of cornering the front desk. The owner/manager is alerted and re-pinged at 24 hours until the ticket is closed.",
+      },
+      {
+        title: "Review management agent",
+        body: "Replies to Google reviews professionally and escalates anything negative for your sign-off before it posts.",
+      },
+      {
+        title: "Review hub",
+        body: "Captures reviews from Google, your website, and old booking sites and condenses them into one central place.",
+      },
+    ],
   },
 ];
 
 const LAUNCH_STEPS = [
-  "Theme the booking experience to each salon's brand.",
+  "Theme the booking experience to your brand.",
   "Import services, staff, hours, and checkout rules.",
-  "Activate wallet, rewards, rebooking, and cross-sell campaigns.",
-  "Connect the AI receptionist, social calendar, and reorder approvals.",
+  "Activate the wallet, rewards, rebooking, and upsell cues.",
+  "Switch on the financial, inventory, marketing, and review agents.",
 ];
 
 function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
@@ -67,27 +124,29 @@ function PhotoFrame({ caption, className = "", ratioClass = "aspect-[4/3]" }: { 
   );
 }
 
-export default function SalonLandingPage() {
+export default function JidokaLandingPage() {
   return (
     <main>
       {/* Top bar */}
       <header className="border-b border-border">
         <div className="max-w-6xl mx-auto flex h-16 items-center justify-between px-5">
-          <span className="font-serif text-lg tracking-wide">Salon Platform</span>
+          <span className="font-serif text-lg tracking-wide">
+            JIDOKA <span className="text-text-secondary">Cosmetics OS</span>
+          </span>
           <DemoCTA label="Book a demo" variant="outline" />
         </div>
       </header>
 
       {/* Hero */}
-      <Section className="pt-16 pb-12 text-center sm:pt-24">
+      <Section className="pt-16 pb-10 text-center sm:pt-24">
         <div className="mx-auto max-w-3xl">
-          <Eyebrow>Booking · Payments · AI growth, in one</Eyebrow>
+          <Eyebrow>The operating system for modern cosmetics businesses</Eyebrow>
           <h1 className="mt-5 font-serif text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
             A more beautiful way to run your salon.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            One refined platform that lowers card fees with ACH client wallets, keeps clients coming back,
-            answers every call with an AI receptionist, and markets while you work.
+            JIDOKA Cosmetics OS puts an intelligent agent on every bottleneck — payments, inventory,
+            payroll, marketing, reviews, and retention — in one customizable platform.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <DemoCTA label="Book a free demo" variant="primary" />
@@ -99,11 +158,23 @@ export default function SalonLandingPage() {
             </a>
           </div>
         </div>
-        <PhotoFrame caption="Hero — salon interior or signature service" ratioClass="aspect-[16/8]" className="mt-14" />
       </Section>
 
-      {/* Built by salon owners, for salon owners */}
-      <Section className="mt-24">
+      {/* Live branded demo — right under the hero CTAs */}
+      <Section className="mt-6">
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <Eyebrow>Live branded demo</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">See it in your brand — every feature.</h2>
+          <p className="mt-4 leading-relaxed text-text-secondary">
+            Drop in your website or Instagram. We pull your logo, colors, and fonts, then walk you through
+            booking, wallet checkout, rewards, marketing, the AI receptionist, and inventory — themed to you.
+          </p>
+        </div>
+        <BrandThemedDemo />
+      </Section>
+
+      {/* Built by salon owners */}
+      <Section className="mt-28">
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
           <PhotoFrame caption="Founders / your team at work" ratioClass="aspect-[4/5]" className="max-w-md" />
           <div>
@@ -112,9 +183,9 @@ export default function SalonLandingPage() {
               Built by salon owners, for salon owners.
             </h2>
             <p className="mt-5 leading-relaxed text-text-secondary">
-              We lived the 3% card fees, the missed calls during a color, and the juggling of five different
-              tools that never talked to each other. So we built the platform we wished we had — one that
-              protects your margin, fills your chairs, and feels as considered as the work you do.
+              We lived the 3% card fees, the missed calls during a color, and the juggling of ten tools that
+              never talked to each other. So we built the platform we wished we had — one that protects your
+              margin, fills your chairs, and feels as considered as the work you do.
             </p>
             <p className="mt-4 leading-relaxed text-text-secondary">
               Every feature started as a problem on our own salon floor. Nothing here is theoretical.
@@ -123,24 +194,53 @@ export default function SalonLandingPage() {
         </div>
       </Section>
 
-      {/* Features */}
+      {/* Bottlenecks */}
       <Section className="mt-28">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <Eyebrow>What&apos;s inside</Eyebrow>
+          <Eyebrow>The daily grind</Eyebrow>
           <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
-            Everything your salon runs on, in one place.
+            You didn&apos;t open a salon to fight your software.
           </h2>
           <p className="mt-4 leading-relaxed text-text-secondary">
-            Fewer vendors, less payment leakage, more repeat visits — without adding another spreadsheet to manage.
+            The bottlenecks that quietly drain your margin, your time, and your energy — every single week.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="bg-surface p-6">
-              <Eyebrow>{f.label}</Eyebrow>
-              <h3 className="mt-3 font-serif text-xl font-medium">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{f.body}</p>
-              <p className="mt-4 text-[12px] uppercase tracking-[0.12em] text-[#9A7B4F]">{f.metric}</p>
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-2">
+          {BOTTLENECKS.map((b) => (
+            <div key={b} className="flex items-baseline gap-3 border-b border-border py-3">
+              <span className="text-[#9A7B4F]" aria-hidden="true">—</span>
+              <span className="text-text-secondary">{b}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* The OS — an agent for every bottleneck */}
+      <Section className="mt-28">
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <Eyebrow>One OS, many agents</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An agent for every bottleneck.</h2>
+          <p className="mt-4 leading-relaxed text-text-secondary">
+            JIDOKA Cosmetics OS puts intelligent agents on the work that drains your day — and lets you add,
+            remove, and customize each one to fit how your salon actually runs.
+          </p>
+        </div>
+
+        <div className="space-y-14">
+          {PILLARS.map((pillar) => (
+            <div key={pillar.name}>
+              <div className="mb-5 flex items-center gap-4">
+                <h3 className="font-serif text-2xl font-medium">{pillar.name}</h3>
+                <span className="h-px flex-1 bg-border" />
+              </div>
+              <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+                {pillar.items.map((item) => (
+                  <div key={item.title} className="bg-surface p-6">
+                    <h4 className="font-serif text-xl font-medium">{item.title}</h4>
+                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">{item.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -153,19 +253,6 @@ export default function SalonLandingPage() {
           <PhotoFrame caption="Studio detail" ratioClass="aspect-[3/4]" />
           <PhotoFrame caption="Happy client" ratioClass="aspect-[3/4]" />
         </div>
-      </Section>
-
-      {/* Live branded demo */}
-      <Section className="mt-28">
-        <div className="mx-auto mb-8 max-w-2xl text-center">
-          <Eyebrow>Live branded demo</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">Your salon, your colors — every feature.</h2>
-          <p className="mt-4 leading-relaxed text-text-secondary">
-            Drop in your website or Instagram. We pull your logo, colors, and fonts, then walk you through
-            booking, wallet checkout, rewards, marketing, the AI receptionist, and inventory — themed to you.
-          </p>
-        </div>
-        <BrandThemedDemo />
       </Section>
 
       {/* Savings calculator */}
@@ -189,8 +276,8 @@ export default function SalonLandingPage() {
             <Eyebrow>Launch sequence</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">From demo to operating system.</h2>
             <p className="mt-5 text-sm leading-relaxed text-text-secondary">
-              Start with the fee-savings wedge, then expand into retention, marketing, rewards, the AI
-              receptionist, and inventory as more of the salon moves onto the platform.
+              Start with the fee-savings wedge, then switch on agents one by one as more of the salon moves
+              onto the platform — at your pace.
             </p>
           </div>
           <div className="space-y-3">
@@ -211,9 +298,9 @@ export default function SalonLandingPage() {
         <div className="overflow-hidden rounded-lg border border-border">
           <PhotoFrame caption="Closing image — your space, your brand" ratioClass="aspect-[16/6]" className="rounded-none border-0" />
           <div className="bg-surface-elevated px-6 py-12 text-center">
-            <h2 className="font-serif text-3xl font-medium sm:text-4xl">One platform. Lower fees. More repeat visits.</h2>
+            <h2 className="font-serif text-3xl font-medium sm:text-4xl">One OS. An agent for every bottleneck.</h2>
             <p className="mx-auto mt-4 max-w-lg leading-relaxed text-text-secondary">
-              Themed to your brand and packaged around the revenue leaks you already feel. See it on your own salon.
+              Themed to your brand, customizable to your salon, and built to protect your margin. See it on your own business.
             </p>
             <div className="mt-8 flex justify-center">
               <DemoCTA label="Book a free demo" variant="primary" />
