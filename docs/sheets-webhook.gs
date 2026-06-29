@@ -29,6 +29,19 @@ function doPost(e) {
     }
 
     var ss = SpreadsheetApp.openById(SHEET_ID);
+
+    // Structured path: write a row to a named tab (financial agent, etc.).
+    // Body: { tab: "Staff", headers: [...], row: [...] }
+    if (data.tab && data.row) {
+      var tab = ss.getSheetByName(data.tab) || ss.insertSheet(data.tab);
+      if (tab.getLastRow() === 0 && data.headers) {
+        tab.appendRow(data.headers);
+      }
+      tab.appendRow(data.row);
+      return json({ ok: true });
+    }
+
+    // Default path: demo-request lead append to the Leads / first tab.
     var sheet = (SHEET_NAME && ss.getSheetByName(SHEET_NAME)) || ss.getSheets()[0];
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
