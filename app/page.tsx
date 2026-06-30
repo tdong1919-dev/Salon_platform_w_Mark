@@ -88,23 +88,16 @@ const PILLARS: {
         title: "Last-minute fills",
         body: "Clients opt in to be alerted of openings within 24 hours, by app or SMS — so cancellations don't stay empty.",
       },
-      {
-        title: "Speak to a manager",
-        body: "Clients file complaints in-app instead of cornering the front desk. The owner/manager is alerted and re-pinged at 24 hours until the ticket is closed.",
-      },
-      {
-        title: "Review hub",
-        body: "Captures reviews from Google, your website, and old booking sites and condenses them into one central place.",
-      },
     ],
   },
 ];
 
 const LAUNCH_STEPS = [
   "Theme the booking experience to your brand.",
+  "Start free 7 day trial.",
+  "Connect with implementation specialist.",
   "Import services, staff, hours, and checkout rules.",
-  "Activate the wallet, rebooking, and upsell cues.",
-  "Switch on the financial, inventory, reviews, intelligence, and receptionist assistants.",
+  "Implement assistants one by one, or all at once if you're ready.",
 ];
 
 const ASSISTANT_ROBOTS = [
@@ -113,6 +106,18 @@ const ASSISTANT_ROBOTS = [
   { name: "Reviews", role: "Reputation", color: "#B05B49" },
   { name: "Intelligence", role: "Market briefings", color: "#45657C" },
   { name: "Receptionist", role: "Booking support", color: "#7A5C91" },
+];
+
+const TEAM_CUES = [
+  "Suggest a facial, Sandra is overdue.",
+  "It's been 4 months since Mary's last IPL. Analyze skin and offer 10% off another treatment.",
+  "John bought shampoo 3 months ago. Ask if he needs more.",
+];
+
+const CLIENT_NOTIFICATIONS = [
+  "Last minute opening alert: 2:30 PM, you're due for a lash refill.",
+  "Did you leave a review yet? Receive a free gift if you leave a review within 24 hours.",
+  "Wallet balance low, you're only 50 stars away from your next redeemable gift. Let's reload now.",
 ];
 
 const SUBSCRIPTION_URL = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_URL || "/settings/stripe";
@@ -172,10 +177,31 @@ function PhoneShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function FloatingCuePhone() {
+  return (
+    <div className="floating-phone-wrap mx-auto w-full max-w-[290px]">
+      <PhoneShell>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Team cues</p>
+        <h4 className="mt-2 font-serif text-2xl font-medium">Next best action</h4>
+        <div className="mt-5 space-y-3">
+          {TEAM_CUES.map((cue, index) => (
+            <div key={cue} className="cue-notification rounded-2xl border border-border bg-surface-elevated p-3 shadow-sm" style={{ animationDelay: `${index * 0.55}s` }}>
+              <div className="flex items-start gap-2">
+                <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-success" />
+                <p className="text-sm leading-relaxed text-text-secondary">{cue}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </PhoneShell>
+    </div>
+  );
+}
+
 function PillarVisual({ type }: { type: PillarVisualType }) {
   if (type === "checkout") {
     return (
-      <div className="mt-5 grid grid-cols-1 items-center gap-5 rounded-md border border-border bg-surface-elevated p-5 md:grid-cols-[0.8fr_1fr]">
+      <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
         <PhoneShell>
           <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Checkout</p>
           <h4 className="mt-2 font-serif text-2xl font-medium">Balayage refresh</h4>
@@ -187,13 +213,6 @@ function PillarVisual({ type }: { type: PillarVisualType }) {
           <button className="mt-5 w-full rounded-xl bg-primary py-3 text-sm font-medium text-white">Pay from wallet</button>
           <p className="mt-3 text-center text-xs text-text-muted">Lower-fee checkout, no front-desk scramble.</p>
         </PhoneShell>
-        <div>
-          <p className="font-serif text-2xl font-medium">What checkout feels like for the client.</p>
-          <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-            Clients can confirm the service, apply wallet funds, and attach retail before they leave the chair.
-            The salon keeps the experience smooth while reducing repeat card fees.
-          </p>
-        </div>
       </div>
     );
   }
@@ -201,45 +220,49 @@ function PillarVisual({ type }: { type: PillarVisualType }) {
   if (type === "upsell") {
     return (
       <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
-        <div className="mx-auto max-w-xl rounded-2xl border border-border bg-white p-5 shadow-sm">
-          <div className="flex items-start gap-3">
-            <span className="mt-1 h-3 w-3 rounded-full bg-success" />
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Team cue</p>
-              <p className="mt-2 font-serif text-2xl font-medium">
-                Suggest a facial to Sandra, it&apos;s been 3 months.
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                She just booked a brow service for today, so the cue appears before checkout.
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full bg-success/10 px-3 py-1 text-xs text-success">High-fit add-on</span>
-            <span className="rounded-full bg-[#9A7B4F]/12 px-3 py-1 text-xs text-[#7a6038]">Before checkout</span>
-          </div>
-        </div>
+        <FloatingCuePhone />
       </div>
     );
   }
 
   if (type === "financial") {
     return (
-      <div className="mt-5 grid grid-cols-1 gap-4 rounded-md border border-border bg-surface-elevated p-5 md:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-md border border-border bg-white p-5">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Financial Assistant report</p>
-          <p className="mt-3 font-serif text-3xl font-medium">$1,840</p>
-          <p className="mt-1 text-sm text-text-secondary">Projected monthly margin lift</p>
-          <div className="mt-5 h-2 overflow-hidden rounded-full bg-border">
-            <div className="h-full w-[68%] bg-success" />
+      <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
+        <div className="mx-auto max-w-4xl rounded-md border border-border bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Executive document</p>
+              <p className="mt-2 font-serif text-3xl font-medium">Monthly intelligence summary</p>
+            </div>
+            <div className="rounded-full bg-success/10 px-3 py-1 text-xs text-success">$1,840 projected margin lift</div>
           </div>
-        </div>
-        <div className="rounded-md border border-border bg-white p-5">
-          <p className="font-serif text-xl font-medium">This month&apos;s read</p>
-          <div className="mt-4 space-y-3 text-sm text-text-secondary">
-            <p>Retail attach rate rose to 31%, but Tuesday color appointments are under capacity.</p>
-            <p>Payroll is healthy if commission-only staff stay below a 47% blended payout.</p>
-            <p className="text-text-primary">Recommended move: test a weekday gloss refresh bundle and measure rebooking within 14 days.</p>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-md border border-border bg-surface p-4">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Finance</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                Retail attach rate rose to 31%, but Tuesday color appointments are under capacity. Recommended move:
+                test a weekday gloss refresh bundle and measure rebooking within 14 days.
+              </p>
+            </div>
+            <div className="rounded-md border border-border bg-surface p-4">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Supplies</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                We spent 15% more on supplies this month and last. Suggest looking at alternatives or increase prices.
+              </p>
+            </div>
+            <div className="rounded-md border border-border bg-surface p-4">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Industry intelligence</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                Nanoblading is searched online 40% more than Microblading. Suggest offering this service as the trends are shifting.
+              </p>
+            </div>
+            <div className="rounded-md border border-border bg-surface p-4">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Reviews</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                We received about the same amount of reviews this month vs last month, keep up the good work.
+                Suggestion: send a notification to clients offering a promotion for leaving an honest review on any platform.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -249,21 +272,22 @@ function PillarVisual({ type }: { type: PillarVisualType }) {
   return (
     <div className="mt-5 grid grid-cols-1 items-center gap-5 rounded-md border border-border bg-surface-elevated p-5 md:grid-cols-[0.8fr_1fr]">
       <PhoneShell>
-        <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Opening alert</p>
-        <h4 className="mt-2 font-serif text-2xl font-medium">Today at 2:30 PM</h4>
-        <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-          Jordan has a last-minute color opening. Want the spot?
-        </p>
-        <div className="mt-5 space-y-2">
-          <button className="w-full rounded-xl bg-primary py-3 text-sm font-medium text-white">Claim appointment</button>
-          <button className="w-full rounded-xl border border-border py-3 text-sm text-text-secondary">Not today</button>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Client dashboard</p>
+        <h4 className="mt-2 font-serif text-2xl font-medium">Welcome Back [Jasmine]</h4>
+        <div className="mt-5 space-y-3">
+          {CLIENT_NOTIFICATIONS.map((notice, index) => (
+            <div key={notice} className="rounded-2xl border border-border bg-surface-elevated p-3">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-text-muted">Notification {index + 1}</p>
+              <p className="mt-1 text-sm leading-relaxed text-text-secondary">{notice}</p>
+            </div>
+          ))}
         </div>
       </PhoneShell>
       <div>
-        <p className="font-serif text-2xl font-medium">Empty chair, filled faster.</p>
+        <p className="font-serif text-2xl font-medium">The client-facing home screen keeps them coming back.</p>
         <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-          Clients who opted into openings get a clean, mobile-first alert. Your team fills the gap without
-          manually texting through a waitlist.
+          Clients see openings, review rewards, wallet reminders, and loyalty progress in the same mobile dashboard
+          they use to book and pay.
         </p>
       </div>
     </div>
@@ -296,7 +320,7 @@ export default function JidokaLandingPage() {
         <div className="mx-auto max-w-3xl">
           <Eyebrow>The operating system for modern cosmetics businesses</Eyebrow>
           <h1 className="mt-5 font-serif text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
-            A less stress, more profit way to run your salon.
+            Less Stress, More Profit, Happier Clients
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
             JIDOKA Cosmetics Operating System gives you an assistant for every obstacle- payments,
@@ -325,6 +349,14 @@ export default function JidokaLandingPage() {
           </p>
         </div>
         <BrandThemedDemo />
+        <div className="mx-auto mt-12 max-w-2xl text-center">
+          <Eyebrow>One System, Five Assistants</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An assistant for every obstacle.</h2>
+          <p className="mt-4 leading-relaxed text-text-secondary">
+            JIDOKA Cosmetics OS puts intelligent assistants on the work that drains your day — and lets you add,
+            remove, and customize each one to fit how your salon actually runs.
+          </p>
+        </div>
         <AssistantRobotShowcase />
       </Section>
 
@@ -384,15 +416,6 @@ export default function JidokaLandingPage() {
 
       {/* The OS — an assistant for every obstacle */}
       <Section className="mt-28">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <Eyebrow>One System, Five Assistants</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An assistant for every obstacle.</h2>
-          <p className="mt-4 leading-relaxed text-text-secondary">
-            JIDOKA Cosmetics OS puts intelligent assistants on the work that drains your day — and lets you add,
-            remove, and customize each one to fit how your salon actually runs.
-          </p>
-        </div>
-
         <div className="space-y-14">
           {PILLARS.map((pillar) => (
             <div key={pillar.name}>
@@ -485,8 +508,6 @@ export default function JidokaLandingPage() {
               { href: "/clients", label: "Client re-engagement" },
               { href: "/openings", label: "Fill openings" },
               { href: "/waitlist", label: "Client waitlist" },
-              { href: "/reviews", label: "Reviews hub" },
-              { href: "/speak-to-a-manager", label: "Speak to a manager" },
               { href: "/wallet", label: "Client wallet" },
               { href: "/store", label: "Online store" },
               { href: "/settings/stripe", label: "Connect Stripe" },

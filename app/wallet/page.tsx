@@ -24,6 +24,7 @@ export default async function WalletPage({
       title="Load once. Pay from balance."
       intro="Top up your wallet by bank transfer (ACH) or card and pay for visits straight from your balance — no card fee on each visit, and faster checkout. Funds settle directly to your salon's own Stripe."
       note={demo ? "Sample mode: actions are simulated so salons can explore the client wallet without Stripe setup." : "MVP: balances are an append-only ledger in a Wallet tab. ACH loads credit once the bank debit clears. Needs Stripe configured + the salon connected at /settings/stripe."}
+      showBottomBack
     >
       <WalletPanel initialSalon={salon} initialClient={client} loaded={loaded} demo={demo} />
     </PageShell>

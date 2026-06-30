@@ -6,12 +6,14 @@ export default function PageShell({
   title,
   intro,
   note,
+  showBottomBack = false,
   children,
 }: {
   eyebrow: string;
   title: string;
   intro: string;
   note?: string;
+  showBottomBack?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -33,6 +35,13 @@ export default function PageShell({
         <p className="mt-5 max-w-xl leading-relaxed text-text-secondary">{intro}</p>
         <div className="mt-8">{children}</div>
         {note && <p className="mt-4 text-xs text-text-muted leading-relaxed">{note}</p>}
+        {showBottomBack && (
+          <div className="mt-10 border-t border-border pt-6">
+            <Link href="/" className="text-[12px] uppercase tracking-[0.14em] text-text-secondary hover:text-text-primary">
+              Back to overview
+            </Link>
+          </div>
+        )}
       </section>
     </main>
   );

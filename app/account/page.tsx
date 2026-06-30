@@ -23,7 +23,7 @@ export default async function AccountPage() {
     { href: `/clients`, label: "Re-engagement", note: "Overdue to rebook" },
     { href: `/openings`, label: "Fill openings", note: "Alert your waitlist" },
     { href: `/promotions`, label: "Rewards & promos", note: "Build & schedule" },
-    { href: `/reviews`, label: "Reviews hub", note: "All your reviews" },
+    { href: `/reviews`, label: "Reviews Assistant", note: "Replies & alerts" },
   ];
 
   return (

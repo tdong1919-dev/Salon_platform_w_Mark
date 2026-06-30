@@ -19,14 +19,29 @@ type Brand = {
 type BrandResponse = { ok: true; source: "brandfetch" | "fallback"; brand: Brand; note?: string };
 
 const DEFAULT_BRAND: Brand = {
-  name: "Precision Lash",
-  domain: "precisionlash.com",
+  name: "[Business Name]",
+  domain: null,
   logoUrl: null,
   iconUrl: null,
   primaryColor: "#2F4A43",
   accentColor: "#1D9E75",
   fontFamily: null,
 };
+
+const SAMPLE_STORE_ITEMS = [
+  {
+    name: "Gloss Revival Mask",
+    price: "$38",
+    copy: "Recommended after color services.",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    name: "Scalp Reset Serum",
+    price: "$42",
+    copy: "Attach to refresh appointments.",
+    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=80",
+  },
+] as const;
 
 const MODULES = [
   {
@@ -107,7 +122,7 @@ const ASSISTANTS = [
 type AssistantKey = (typeof ASSISTANTS)[number]["key"];
 
 function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
+  const parts = name.replace(/[\[\]]/g, "").trim().split(/\s+/).filter(Boolean);
   return ((parts[0]?.[0] || "") + (parts[1]?.[0] || "")).toUpperCase() || "•";
 }
 
@@ -165,6 +180,8 @@ function ModulePreview({
   storeHref,
   assistantKey,
   setAssistantKey,
+  allowWalletTips,
+  setAllowWalletTips,
 }: {
   moduleKey: ModuleKey;
   accent: string;
@@ -172,6 +189,8 @@ function ModulePreview({
   storeHref: string;
   assistantKey: AssistantKey;
   setAssistantKey: (key: AssistantKey) => void;
+  allowWalletTips: boolean;
+  setAllowWalletTips: (value: boolean) => void;
 }) {
   if (moduleKey === "wallet") {
     return (
@@ -191,6 +210,27 @@ function ModulePreview({
           <Row left="Balayage checkout" right="$225.00" />
           <Row left="ACH wallet fee" right="$1.80" sub="Compared with the higher card-fee path." />
           <Row left="Retail add-on" right="$32.00" sub="At-home product attached at checkout." />
+          <div className="mt-4 rounded-md border border-border bg-surface-elevated p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-text-primary">Allow wallet tips</p>
+                <p className="mt-1 text-xs text-text-muted">Owner checkout rule for client wallet payments.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAllowWalletTips(!allowWalletTips)}
+                className="relative h-7 w-12 rounded-full transition-colors"
+                style={{ backgroundColor: allowWalletTips ? accent : "var(--color-border)" }}
+                aria-pressed={allowWalletTips}
+                aria-label="Toggle wallet tips"
+              >
+                <span
+                  className="absolute left-0 top-1 h-5 w-5 rounded-full bg-white transition-transform"
+                  style={{ transform: allowWalletTips ? "translateX(24px)" : "translateX(4px)" }}
+                />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -199,16 +239,18 @@ function ModulePreview({
   if (moduleKey === "store") {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {[
-          ["Gloss Revival Mask", "$38", "Recommended after color services."],
-          ["Scalp Reset Serum", "$42", "Attach to refresh appointments."],
-        ].map(([name, price, copy]) => (
-          <div key={name} className="border border-border bg-white p-4">
-            <div className="photo-frame mb-3 aspect-[4/3] w-full rounded-md border border-border" aria-hidden="true" />
-            <p className="font-serif text-lg font-medium">{name}</p>
-            <p className="mt-1 text-sm text-text-secondary">{copy}</p>
+        {SAMPLE_STORE_ITEMS.map((item) => (
+          <div key={item.name} className="border border-border bg-white p-4">
+            <div
+              className="mb-3 aspect-[4/3] w-full rounded-md border border-border bg-cover bg-center"
+              style={{ backgroundImage: `url(${item.image})` }}
+              aria-label={`${item.name} sample photo`}
+              role="img"
+            />
+            <p className="font-serif text-lg font-medium">{item.name}</p>
+            <p className="mt-1 text-sm text-text-secondary">{item.copy}</p>
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm font-medium">{price}</span>
+              <span className="text-sm font-medium">{item.price}</span>
               <a href={storeHref} className="text-[11px] uppercase tracking-[0.12em]" style={{ color: accent }}>
                 Shop sample
               </a>
@@ -280,8 +322,8 @@ function ModulePreview({
         <p className="mt-1 text-sm text-text-secondary">Alert waitlisted clients when a slot opens.</p>
       </div>
       <div className="bg-white p-5">
-        <p className="font-serif text-lg font-medium">Review queue</p>
-        <p className="mt-1 text-sm text-text-secondary">Positive drafts and manager alerts in one place.</p>
+        <p className="font-serif text-lg font-medium">Reviews Assistant</p>
+        <p className="mt-1 text-sm text-text-secondary">Positive replies and manager alerts in one place.</p>
       </div>
     </div>
   );
@@ -296,6 +338,7 @@ export default function BrandThemedDemo() {
   const [error, setError] = useState<string | null>(null);
   const [moduleKey, setModuleKey] = useState<ModuleKey>("dashboard");
   const [assistantKey, setAssistantKey] = useState<AssistantKey>("financial");
+  const [allowWalletTips, setAllowWalletTips] = useState(true);
 
   async function applyBrand(e?: React.FormEvent) {
     e?.preventDefault();
@@ -323,8 +366,8 @@ export default function BrandThemedDemo() {
   const primary = brand.primaryColor;
   const accent = brand.accentColor;
   const activeModule = MODULES.find((module) => module.key === moduleKey) ?? MODULES[0];
-  const demoSalon = useMemo(() => encodeURIComponent(brand.name || "Demo Salon"), [brand.name]);
-  const walletHref = `/wallet?demo=1&salon=${demoSalon}&client=Maya%20Rivera`;
+  const demoSalon = useMemo(() => encodeURIComponent(brand.name || "[Business Name]"), [brand.name]);
+  const walletHref = `/wallet?demo=1&salon=${demoSalon}&client=Demo%20Customer%2FPatient`;
   const storeHref = `/store?demo=1&salon=${demoSalon}`;
 
   return (
@@ -422,6 +465,8 @@ export default function BrandThemedDemo() {
                 storeHref={storeHref}
                 assistantKey={assistantKey}
                 setAssistantKey={setAssistantKey}
+                allowWalletTips={allowWalletTips}
+                setAllowWalletTips={setAllowWalletTips}
               />
             </div>
           </div>
