@@ -77,9 +77,15 @@ export default function AboutPage() {
         <div className="rounded-lg border border-border bg-surface-elevated p-6 sm:p-10">
           <Eyebrow>JIDOKA Group</Eyebrow>
           <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-[0.9fr_1.1fr]">
-            <h2 className="font-serif text-4xl font-medium leading-tight">
-              Consulting and implementation for businesses that want to become more efficient, competitive, and profitable.
-            </h2>
+            <div>
+              <div className="inline-flex min-w-[220px] flex-col rounded-md border border-text-primary bg-white px-6 py-5 shadow-sm">
+                <span className="font-serif text-4xl font-medium leading-none tracking-wide">Jidoka</span>
+                <span className="mt-1 text-[12px] uppercase tracking-[0.38em] text-text-secondary">Group</span>
+              </div>
+              <h2 className="mt-8 font-serif text-4xl font-medium leading-tight">
+                Consulting and implementation for businesses that want to become more efficient, competitive, and profitable.
+              </h2>
+            </div>
             <div className="space-y-4 text-sm leading-relaxed text-text-secondary">
               <p>
                 JIDOKA Group is a collective of experts like Crystal across different verticals and industries,
@@ -91,6 +97,16 @@ export default function AboutPage() {
                 humans with robots, but to help founders fearlessly live a life where they can connect with what
                 and how they actually want to live by making their business work for them.
               </p>
+              <div className="pt-3">
+                <a
+                  href="https://jidokagroup.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex rounded-sm bg-gradient-brand px-6 py-3 text-[12px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+                >
+                  Visit JidokaGroup.com
+                </a>
+              </div>
             </div>
           </div>
         </div>
