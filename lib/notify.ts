@@ -15,13 +15,46 @@ export interface TicketNotification {
 
 type NotifyResult = { ok: boolean; skipped?: boolean; error?: string }
 
-/** Email via Resend (https://resend.com). Free tier: 100/day. */
-export async function sendHelpEmail(ticket: TicketNotification): Promise<NotifyResult> {
+export async function sendPlainEmail({
+  to,
+  subject,
+  text,
+  replyTo,
+}: {
+  to: string
+  subject: string
+  text: string
+  replyTo?: string | null
+}): Promise<NotifyResult> {
   const apiKey = process.env.RESEND_API_KEY
-  const to = process.env.HELP_NOTIFY_EMAIL || 'hello@barebranding.site'
   // Resend's shared sender works without domain verification (delivers to the account owner).
   const from = process.env.HELP_NOTIFY_FROM || 'Salon Platform <onboarding@resend.dev>'
   if (!apiKey) return { ok: false, skipped: true }
+
+  const payload: { from: string; to: string; subject: string; text: string; reply_to?: string } = {
+    from,
+    to,
+    subject,
+    text,
+  }
+  if (replyTo) payload.reply_to = replyTo
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) return { ok: false, error: `Resend ${res.status}: ${await res.text()}` }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'email send error' }
+  }
+}
+
+/** Email via Resend (https://resend.com). Free tier: 100/day. */
+export async function sendHelpEmail(ticket: TicketNotification): Promise<NotifyResult> {
+  const to = process.env.HELP_NOTIFY_EMAIL || 'hello@barebranding.site'
 
   const subject = `New ${ticket.concern_type || 'lead'} — ${ticket.page_name || ticket.name}`
   const text =
@@ -33,36 +66,13 @@ export async function sendHelpEmail(ticket: TicketNotification): Promise<NotifyR
     `Type: ${ticket.concern_type || 'N/A'}\n\n` +
     `${ticket.message}\n`
 
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, reply_to: ticket.email, subject, text }),
-    })
-    if (!res.ok) return { ok: false, error: `Resend ${res.status}: ${await res.text()}` }
-    return { ok: true }
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : 'email send error' }
-  }
+  return sendPlainEmail({ to, replyTo: ticket.email, subject, text })
 }
 
 /** Email a passwordless sign-in link. */
 export async function sendMagicLink(to: string, url: string): Promise<NotifyResult> {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) return { ok: false, skipped: true }
-  const from = process.env.HELP_NOTIFY_FROM || 'JIDOKA Cosmetics OS <onboarding@resend.dev>'
   const text =
     `Sign in to JIDOKA Cosmetics OS:\n\n${url}\n\n` +
     `This link expires in 15 minutes. If you didn't request it, you can ignore this email.`
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, subject: 'Your sign-in link', text }),
-    })
-    if (!res.ok) return { ok: false, error: `Resend ${res.status}` }
-    return { ok: true }
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : 'email send error' }
-  }
+  return sendPlainEmail({ to, subject: 'Your sign-in link', text })
 }

@@ -37,7 +37,8 @@ Environment variables). Most features degrade gracefully if a key is missing.
    paste the latest `docs/sheets-webhook.gs`, then **Deploy → Manage deployments →
    ✏️ → New version → Deploy** (same `/exec` URL). Without this, only lead capture works.
 2. **Tabs are created automatically** on first write: `Leads`, `Staff`, `Payroll`,
-   `Complaints`, `Inventory`, `Promotions`, `Reviews`, `Clients`.
+   `Complaints`, `Inventory`, `Promotions`, `Reviews`, `Clients`, `Waitlist`,
+   `Openings`, `Products`, `Stripe`, and `Wallet`.
 3. **For the READ features** (reviews hub, complaint re-ping, client re-engagement digest):
    set `SHEETS_SHEET_ID` and share the sheet **"Anyone with the link can view."**
    - ⚠️ **Privacy:** link-view exposes *every* tab (incl. Payroll, Complaints, Clients)
@@ -85,12 +86,13 @@ To enable:
 
 ## 3. Scheduled jobs (cron)
 
-Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron-job.org)
+Three endpoints should run daily. Easiest free option: [cron-job.org](https://cron-job.org)
 → create a daily job for each URL with header `Authorization: Bearer <CRON_SECRET>`
 (or append `?secret=<CRON_SECRET>`):
 
 - `https://YOUR-SITE/api/complaint/reping` — re-alerts on complaints open >24h
 - `https://YOUR-SITE/api/reengagement/digest` — emails the daily overdue-to-rebook list
+- `https://YOUR-SITE/api/promotion/send` — emails the owner promotions scheduled for today
 
 (Netlify Scheduled Functions also work, but an external pinger is simplest for Next routes.)
 
@@ -115,6 +117,8 @@ Two endpoints should run daily. Easiest free option: [cron-job.org](https://cron
 | `/inventory` | Flag low stock + AI cheapest-reorder search; tax categories |
 | `/intelligence` | Monthly executive industry/competitor briefing |
 | `/clients` | Daily list of clients overdue to rebook + add clients |
+| `/openings` | Owner posts a last-minute opening and alerts opted-in clients |
+| `/waitlist?salon=SalonName` | Public client opt-in form for last-minute openings |
 | `/promotions` | Build & schedule rewards/promos with holiday templates |
 | `/reviews` | Central reviews wall + leave-a-review |
 | `/speak-to-a-manager` | Complaint tickets → owner alerts + 24h re-ping |
@@ -134,11 +138,11 @@ These were in the spec but require external services, approvals, or Mark's booki
 | **Stripe ACH client wallet** (flagship) | ✅ MVP built — Connect onboarding (`/settings/stripe`) + load/pay (`/wallet`) + webhook. Remaining for production: a real database for the money ledger (transactions, no double-spend) and refunds/disputes handling |
 | **Online store** | ✅ MVP built (`/store`) — catalog + Stripe checkout to the salon. Remaining: shipping, inventory sync, order management UI |
 | **Google review auto-responder** + **review aggregation** | **Google Business Profile API** (OAuth app + Google verification/approval) |
-| **Last-minute cancellation fills (opt-in SMS)** | Booking calendar data + **Twilio** (SMS) and client opt-in storage |
+| **Last-minute cancellation fills** | ✅ Email MVP built — public waitlist opt-in (`/waitlist?salon=...`) + owner opening poster (`/openings`). Remaining: booking calendar data + **Twilio** for SMS |
 | **Upsell cues** | Per-client visit/POS history (comes from the booking system) |
 | **AUTOM8 marketing suite** (smart schedule, analytics, Brand Brain, comment→DM; TikTok/LinkedIn) | Integrate the existing Autom8 systems, re-branded to JIDOKA |
-| **Scheduled promotion sends** | Wire the Promotions tab to a daily cron that sends via email/SMS |
-| **Booking / POS / calendar core** | Mark's repo (merges in here) |
+| **Scheduled promotion sends** | ✅ Owner reminder MVP built (`/api/promotion/send`). Remaining: verified sender domain, audience lists, direct email/SMS sends |
+| **Booking / POS / calendar core** | Mark's GitHub platform modules are merged here. Remaining: import/live-sync appointment calendar, service menu, staff schedule, and POS history when Mark's booking data source is available |
 
 **Recommended next:** the Stripe ACH wallet — it's the headline value prop and the
 one feature that genuinely warrants a real database (Supabase free tier or similar)

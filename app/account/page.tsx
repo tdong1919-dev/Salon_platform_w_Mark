@@ -21,6 +21,7 @@ export default async function AccountPage() {
     { href: `/inventory`, label: "Inventory agent", note: "Low stock & reorder" },
     { href: `/intelligence`, label: "Industry intelligence", note: "Monthly briefing" },
     { href: `/clients`, label: "Re-engagement", note: "Overdue to rebook" },
+    { href: `/openings`, label: "Fill openings", note: "Alert your waitlist" },
     { href: `/promotions`, label: "Rewards & promos", note: "Build & schedule" },
     { href: `/reviews`, label: "Reviews hub", note: "All your reviews" },
   ];
