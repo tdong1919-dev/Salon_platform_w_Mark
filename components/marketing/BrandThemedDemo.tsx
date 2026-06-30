@@ -57,13 +57,6 @@ const MODULES = [
     eyebrow: "Assistant hub",
     body: "Chat with each assistant, review reports, see the latest data, and skim one-page executive summaries without jumping between tools.",
   },
-  {
-    key: "client",
-    label: "Client view",
-    title: "What clients see.",
-    eyebrow: "Mobile booking",
-    body: "A clickable phone demo shows how clients book, add wallet funds, and confirm an appointment from their side.",
-  },
 ] as const;
 
 type ModuleKey = (typeof MODULES)[number]["key"];
@@ -112,32 +105,6 @@ const ASSISTANTS = [
 ] as const;
 
 type AssistantKey = (typeof ASSISTANTS)[number]["key"];
-
-const CLIENT_STEPS = [
-  {
-    key: "services",
-    label: "Choose service",
-    title: "Select a service",
-    body: "Balayage refresh",
-    meta: "2 hr 15 min · from $225",
-  },
-  {
-    key: "time",
-    label: "Pick time",
-    title: "Pick a time",
-    body: "Thursday, 2:30 PM",
-    meta: "With Jordan · 24-hour opening",
-  },
-  {
-    key: "checkout",
-    label: "Confirm",
-    title: "Confirm visit",
-    body: "Wallet balance: $300",
-    meta: "Pay deposit from wallet and save card fees",
-  },
-] as const;
-
-type ClientStepKey = (typeof CLIENT_STEPS)[number]["key"];
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -198,8 +165,6 @@ function ModulePreview({
   storeHref,
   assistantKey,
   setAssistantKey,
-  clientStep,
-  setClientStep,
 }: {
   moduleKey: ModuleKey;
   accent: string;
@@ -207,8 +172,6 @@ function ModulePreview({
   storeHref: string;
   assistantKey: AssistantKey;
   setAssistantKey: (key: AssistantKey) => void;
-  clientStep: ClientStepKey;
-  setClientStep: (key: ClientStepKey) => void;
 }) {
   if (moduleKey === "wallet") {
     return (
@@ -308,51 +271,6 @@ function ModulePreview({
     );
   }
 
-  if (moduleKey === "client") {
-    const activeStep = CLIENT_STEPS.find((step) => step.key === clientStep) ?? CLIENT_STEPS[0];
-    return (
-      <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[0.78fr_1fr]">
-        <div className="mx-auto w-full max-w-[270px] rounded-[34px] border border-text-primary bg-text-primary p-2 shadow-sm">
-          <div className="min-h-[480px] rounded-[28px] bg-white p-4">
-            <div className="mx-auto mb-5 h-1.5 w-16 rounded-full bg-border" />
-            <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Client booking</p>
-            <h4 className="mt-2 font-serif text-2xl font-medium">{activeStep.title}</h4>
-            <div className="mt-5 rounded-2xl border border-border bg-surface-elevated p-4">
-              <p className="font-serif text-xl font-medium">{activeStep.body}</p>
-              <p className="mt-2 text-sm text-text-secondary">{activeStep.meta}</p>
-            </div>
-            <div className="mt-5 space-y-2">
-              {CLIENT_STEPS.map((step) => (
-                <button
-                  key={step.key}
-                  type="button"
-                  onClick={() => setClientStep(step.key)}
-                  className="flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left text-sm"
-                  style={
-                    step.key === clientStep
-                      ? { borderColor: accent, color: accent }
-                      : { borderColor: "var(--color-border)", color: "var(--color-text-secondary)" }
-                  }
-                >
-                  <span>{step.label}</span>
-                  <span>{step.key === clientStep ? "Current" : "View"}</span>
-                </button>
-              ))}
-            </div>
-            <button type="button" className="mt-5 w-full rounded-xl py-3 text-sm font-medium text-white" style={{ backgroundColor: accent }}>
-              Confirm appointment
-            </button>
-          </div>
-        </div>
-        <div className="space-y-3">
-          <Row left="Mobile-first booking" right="3 taps" sub="Most appointment booking starts on a phone, so the client flow stays simple." />
-          <Row left="Wallet checkout" right="$300 sample balance" sub="Clients can apply wallet funds before checkout." />
-          <Row left="Smart follow-up" right="Automatic" sub="Confirmation, reminders, and post-visit review requests stay in the same operating system." />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2">
       <BrandLink href={walletHref} title="Client wallet" note="Open a sample wallet with balance data." accent={accent} />
@@ -378,7 +296,6 @@ export default function BrandThemedDemo() {
   const [error, setError] = useState<string | null>(null);
   const [moduleKey, setModuleKey] = useState<ModuleKey>("dashboard");
   const [assistantKey, setAssistantKey] = useState<AssistantKey>("financial");
-  const [clientStep, setClientStep] = useState<ClientStepKey>("services");
 
   async function applyBrand(e?: React.FormEvent) {
     e?.preventDefault();
@@ -505,8 +422,6 @@ export default function BrandThemedDemo() {
                 storeHref={storeHref}
                 assistantKey={assistantKey}
                 setAssistantKey={setAssistantKey}
-                clientStep={clientStep}
-                setClientStep={setClientStep}
               />
             </div>
           </div>

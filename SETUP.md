@@ -21,6 +21,7 @@ Environment variables). Most features degrade gracefully if a key is missing.
 | `STRIPE_SECRET_KEY` | Stripe Connect (salons link their own Stripe) | Stripe dashboard → API keys (your platform account) | optional, for payments |
 | `STRIPE_CONNECT_CLIENT_ID` | Stripe Connect OAuth | Stripe dashboard → Connect → Settings (`ca_…`) | optional, for payments |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout | Stripe dashboard → API keys (`pk_…`) | optional |
+| `NEXT_PUBLIC_STRIPE_SUBSCRIPTION_URL` | 7-day trial CTA | Stripe Payment Link / subscription checkout URL | optional, for trial CTA |
 | `STRIPE_WEBHOOK_SECRET` | Crediting the wallet on load | Stripe → Developers → Webhooks (`whsec_…`) | optional, for wallet |
 | `BRANDFETCH_API_KEY` | Brand-theming demo | [developers.brandfetch.com](https://developers.brandfetch.com) | ✅ you have it |
 | `RESEND_API_KEY` | All email notifications | [resend.com](https://resend.com) | ✅ you have it |
