@@ -15,9 +15,9 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "JIDOKA Cosmetics OS — An agent for every salon bottleneck",
+  title: "JIDOKA Cosmetics OS — An assistant for every salon obstacle",
   description:
-    "The operating system for modern cosmetics businesses: a Stripe wallet that cuts merchant fees, plus intelligent agents for inventory, payroll, marketing, reviews, retention, and more — in one customizable platform.",
+    "The operating system for modern cosmetics businesses: a Stripe wallet that cuts merchant fees, plus intelligent assistants for inventory, payroll, marketing, reviews, retention, and more — in one customizable platform.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

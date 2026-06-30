@@ -12,10 +12,10 @@ export default async function IntelligencePage() {
   await requireSession();
   return (
     <PageShell
-      eyebrow="Agent · Intelligence"
+      eyebrow="Assistant · Intelligence"
       title="Know what's next in your niche."
       intro="A monthly, executive one-pager on what's trending and what comparable businesses are doing — focused on your exact services and market, so you can move first instead of catching up."
-      note="The agent searches the live web; treat figures as directional. Connect ANTHROPIC_API_KEY to enable it."
+      note="The assistant searches the live web; treat figures as directional. Connect ANTHROPIC_API_KEY to enable it."
     >
       <IntelligenceReport />
     </PageShell>

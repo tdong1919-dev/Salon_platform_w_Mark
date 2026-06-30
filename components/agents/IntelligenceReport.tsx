@@ -2,7 +2,7 @@
 /**
  * IntelligenceReport — request a monthly industry briefing and render it as an
  * executive one-pager. POSTs to /api/intelligence. Includes a tiny markdown
- * renderer for the headings/bullets/bold the agent returns.
+ * renderer for the headings/bullets/bold the assistant returns.
  */
 import { useState } from "react";
 

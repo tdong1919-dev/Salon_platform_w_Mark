@@ -1,5 +1,5 @@
 /**
- * POST /api/intelligence — the industry intelligence agent. Produces an
+ * POST /api/intelligence — the industry intelligence assistant. Produces an
  * executive one-page report on what's trending and what competitors are doing
  * in the salon's niche, informed by its services and location. Uses Claude +
  * web search; graceful without ANTHROPIC_API_KEY.
@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runClaudeWithSearch } from "@/lib/claude";
 
-const SYSTEM = `You are the industry intelligence agent for a salon/spa/medspa owner. Produce a crisp, executive ONE-PAGE monthly briefing on trends and competitor activity in their specific niche.
+const SYSTEM = `You are the industry intelligence assistant for a salon/spa/medspa owner. Produce a crisp, executive ONE-PAGE monthly briefing on trends and competitor activity in their specific niche.
 
 Use web search for current, real signals (recent trends, popular services, pricing moves, what nearby or comparable businesses are promoting). Be specific and recent — cite what you found in plain language, no fabricated stats.
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   const result = await runClaudeWithSearch(SYSTEM, prompt);
   if (!result.ok) {
     const msg = result.error.includes("ANTHROPIC_API_KEY")
-      ? "The intelligence agent needs an Anthropic API key (ANTHROPIC_API_KEY)."
+      ? "The intelligence assistant needs an Anthropic API key (ANTHROPIC_API_KEY)."
       : `Couldn't generate the report (${result.error}).`;
     return NextResponse.json({ error: msg }, { status: 503 });
   }

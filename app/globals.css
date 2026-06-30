@@ -62,3 +62,121 @@ body {
   background-color: var(--color-linen);
   background-image: linear-gradient(135deg, #F2ECE3 0%, #E9E2D6 100%);
 }
+
+.assistant-robot-stage {
+  perspective: 900px;
+}
+
+.assistant-robot-card {
+  min-height: 184px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 18px 14px;
+  text-align: center;
+  animation: assistant-card-drift 5s ease-in-out infinite;
+}
+
+.assistant-robot {
+  position: relative;
+  width: 74px;
+  height: 98px;
+  margin: 0 auto;
+  animation: assistant-bob 2.7s ease-in-out infinite;
+}
+
+.assistant-robot-antenna {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 15px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+.assistant-robot-antenna::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: inherit;
+  transform: translateX(-50%);
+}
+
+.assistant-robot-head {
+  position: absolute;
+  top: 18px;
+  left: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 48px;
+  height: 38px;
+  border: 2px solid;
+  border-radius: 16px 16px 12px 12px;
+  background: #fff;
+}
+
+.assistant-robot-head span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-text-primary);
+}
+
+.assistant-robot-body {
+  position: absolute;
+  top: 58px;
+  left: 17px;
+  width: 40px;
+  height: 32px;
+  border-radius: 12px;
+}
+
+.assistant-robot-panel {
+  position: absolute;
+  top: 10px;
+  left: 11px;
+  width: 18px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.assistant-robot-arm {
+  position: absolute;
+  top: 62px;
+  width: 9px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.assistant-robot-arm-left {
+  left: 7px;
+  transform: rotate(18deg);
+}
+
+.assistant-robot-arm-right {
+  right: 7px;
+  transform-origin: 50% 4px;
+  animation: assistant-wave 1.4s ease-in-out infinite;
+}
+
+@keyframes assistant-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes assistant-wave {
+  0%, 100% { transform: rotate(-20deg); }
+  50% { transform: rotate(-70deg); }
+}
+
+@keyframes assistant-card-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}

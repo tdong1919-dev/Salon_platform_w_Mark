@@ -1,6 +1,6 @@
 "use client";
 /**
- * DemoCTA — a "Book a free demo" button that opens a lead-capture modal and
+ * DemoCTA — a next-step button that opens a lead-capture modal and
  * POSTs to /api/demo-request. Used in the hero and footer of the /salons page.
  * Each instance manages its own modal + form state; success is shown inline.
  */
@@ -20,11 +20,11 @@ const priorities = [
   "Credit card transaction fees",
   "Client retention and cross-sell",
   "Social media scheduling",
-  "Rewards or memberships",
+  "Client loyalty and memberships",
   "Inventory tracking and reorder",
 ];
 
-export default function DemoCTA({ label = "Book a free demo", variant = "primary", className = "" }: Props) {
+export default function DemoCTA({ label = "Start my salon upgrade", variant = "primary", className = "" }: Props) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -102,7 +102,7 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
         {label}
       </button>
 
-      <Modal isOpen={open} onClose={close} title={done ? undefined : "Book your free demo"} size="md">
+      <Modal isOpen={open} onClose={close} title={done ? undefined : "Start your salon upgrade"} size="md">
         {done ? (
           <div className="text-center py-6">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-success/15 text-success text-2xl">
@@ -110,7 +110,7 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
             </div>
             <h3 className="text-xl font-serif font-medium mb-1">You&apos;re on the list</h3>
             <p className="text-sm text-text-secondary mb-6">
-              We&apos;ll reach out within one business day to set up your demo.
+              We&apos;ll reach out within one business day with the best next step for your salon.
             </p>
             <button onClick={close} className="px-6 py-2.5 rounded-sm uppercase text-[12px] tracking-[0.14em] border border-text-primary/30 text-text-primary hover:bg-black/[0.04]">
               Done
@@ -119,7 +119,7 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
         ) : (
           <form onSubmit={submit} className="space-y-3">
             <p className="text-sm text-text-secondary -mt-1 mb-1">
-              Tell us a little about your salon and we&apos;ll show you the platform themed to your brand.
+              Tell us a little about your salon and we&apos;ll map the fastest path from preview to operating system.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input className={inputClass} placeholder="Your name *" value={form.name} onChange={set("name")} aria-label="Your name" />
@@ -142,7 +142,7 @@ export default function DemoCTA({ label = "Book a free demo", variant = "primary
               disabled={submitting}
               className="w-full bg-gradient-brand text-white px-6 py-3.5 rounded-sm uppercase text-[12px] tracking-[0.14em] disabled:opacity-50"
             >
-              {submitting ? "Sending…" : "Request my demo"}
+              {submitting ? "Sending..." : "Start my upgrade"}
             </button>
             <p className="text-xs text-text-muted text-center">No card required. We&apos;ll never share your details.</p>
           </form>

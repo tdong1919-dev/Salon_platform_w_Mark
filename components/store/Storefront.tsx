@@ -11,14 +11,20 @@ type Product = { name: string; price: number; description: string; image: string
 const inputClass =
   "w-full rounded-md border border-border bg-white px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary placeholder:text-text-muted";
 
-export default function Storefront({ products, salon }: { products: Product[]; salon: string }) {
+export default function Storefront({ products, salon, demo = false }: { products: Product[]; salon: string; demo?: boolean }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: "", price: "", description: "", image: "" });
   const [added, setAdded] = useState(false);
+  const [sampleOrder, setSampleOrder] = useState<string | null>(null);
 
   async function buy(p: Product) {
+    if (demo) {
+      setError(null);
+      setSampleOrder(`${p.name} added to the sample order.`);
+      return;
+    }
     if (!salon) {
       setError("Add ?salon=Your%20Salon to the URL to shop a salon's store.");
       return;
@@ -68,6 +74,7 @@ export default function Storefront({ products, salon }: { products: Product[]; s
   return (
     <div className="space-y-6">
       {error && <p className="text-sm text-error">{error}</p>}
+      {sampleOrder && <p className="rounded-md border border-success/40 bg-success/10 px-4 py-3 text-sm text-success">{sampleOrder}</p>}
 
       {products.length === 0 ? (
         <p className="rounded-xl border border-border bg-surface-elevated px-5 py-6 text-sm text-text-secondary">
@@ -83,7 +90,7 @@ export default function Storefront({ products, salon }: { products: Product[]; s
               <div className="mt-3 flex items-center justify-between">
                 <span className="text-sm font-medium">${p.price.toFixed(2)}</span>
                 <button type="button" onClick={() => buy(p)} disabled={busy === p.name} className="rounded-sm bg-gradient-brand px-4 py-2 text-[11px] uppercase tracking-[0.12em] text-white disabled:opacity-50">
-                  {busy === p.name ? "…" : "Buy"}
+                  {busy === p.name ? "..." : demo ? "Add" : "Buy"}
                 </button>
               </div>
             </div>

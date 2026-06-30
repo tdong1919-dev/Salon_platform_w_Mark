@@ -1,10 +1,10 @@
 "use client";
 /**
- * BrandThemedDemo — pulls a prospect's brand from /api/brandfetch and re-skins a
- * miniature version of Mark's JIDOKA owner dashboard with their name, logo, and
- * colors. This should feel like the real platform, not a separate phone mockup.
+ * BrandThemedDemo — pulls a prospect's brand from /api/brandfetch and re-skins
+ * a miniature version of Mark's JIDOKA owner dashboard with their name, logo,
+ * and colors. This should feel like the real platform, not a separate mockup.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type Brand = {
   name: string;
@@ -34,7 +34,7 @@ const MODULES = [
     label: "Dashboard",
     title: "Your salon command center.",
     eyebrow: "Owner dashboard",
-    body: "Everything Mark built for the owner: wallet, store, financials, inventory, retention, reviews, promos, and opening fills.",
+    body: "The owner view Mark built: wallet, POS, store, openings, reviews, assistant reports, and the next best action for the day.",
   },
   {
     key: "wallet",
@@ -44,38 +44,100 @@ const MODULES = [
     body: "Client wallet loads, service payments, and in-salon retail checkout settle to the salon's own Stripe account.",
   },
   {
-    key: "inventory",
-    label: "Inventory",
-    title: "Never run out mid-service.",
-    eyebrow: "Agent · Inventory",
-    body: "Staff flag low stock, the agent drafts reorder recommendations, and items are categorized for cleaner books.",
+    key: "store",
+    label: "Online store",
+    title: "Retail between visits.",
+    eyebrow: "Retail",
+    body: "Clients can buy the at-home products you recommend from a mobile-friendly storefront with sample products ready to explore.",
   },
   {
-    key: "growth",
-    label: "Growth",
-    title: "Keep clients coming back.",
-    eyebrow: "Retention",
-    body: "Rewards, re-engagement, waitlist alerts, and opening fills turn lapsed demand into booked appointments.",
+    key: "assistants",
+    label: "Assistants",
+    title: "Five assistants, one command center.",
+    eyebrow: "Assistant hub",
+    body: "Chat with each assistant, review reports, see the latest data, and skim one-page executive summaries without jumping between tools.",
   },
   {
-    key: "reviews",
-    label: "Reviews",
-    title: "Centralize reputation.",
-    eyebrow: "Reviews hub",
-    body: "Capture reviews from the website, Google, and old booking tools, then surface what needs owner attention.",
+    key: "client",
+    label: "Client view",
+    title: "What clients see.",
+    eyebrow: "Mobile booking",
+    body: "A clickable phone demo shows how clients book, add wallet funds, and confirm an appointment from their side.",
   },
 ] as const;
 
 type ModuleKey = (typeof MODULES)[number]["key"];
 
-const DASHBOARD_LINKS = [
-  { label: "Client wallet", note: "Loads & balances" },
-  { label: "Online store", note: "Retail checkout" },
-  { label: "Financial agent", note: "Payroll & commissions" },
-  { label: "Inventory agent", note: "Low stock & reorder" },
-  { label: "Fill openings", note: "Alert the waitlist" },
-  { label: "Rewards & promos", note: "Build & schedule" },
-];
+const ASSISTANTS = [
+  {
+    key: "financial",
+    label: "Financial Assistant",
+    metric: "$1,840 margin lift",
+    status: "Payroll draft ready",
+    report: "Retail attach rate rose to 31%. Move gloss add-ons into checkout prompts and review Alex's commission mix before Friday payroll.",
+    messages: ["Can we afford a Tuesday promotion?", "Yes. Keep the offer service-only and cap it at 12 appointments to protect margin."],
+  },
+  {
+    key: "inventory",
+    label: "Inventory Assistant",
+    metric: "4 low-stock items",
+    status: "2 reorder drafts",
+    report: "Lash adhesive and toner 7N are below threshold. Gloss trays are healthy for six weeks based on recent POS movement.",
+    messages: ["Which products need attention today?", "Lash adhesive first. It is below threshold and used faster than forecast this week."],
+  },
+  {
+    key: "reviews",
+    label: "Reviews Assistant",
+    metric: "18 reviews imported",
+    status: "1 manager alert",
+    report: "Positive Google reviews have unique draft replies. One 2-star booking-site review is held with a professional response and manager notification.",
+    messages: ["What needs owner attention?", "A 2-star review is ready for manager follow-up before any public reply is posted."],
+  },
+  {
+    key: "intelligence",
+    label: "Industry Intelligence",
+    metric: "1-page brief",
+    status: "June report ready",
+    report: "Competitors are packaging maintenance gloss appointments with scalp care. Two nearby salons are pushing weekday color refresh offers.",
+    messages: ["What should we try this month?", "Test a weekday gloss refresh bundle and measure rebooking within 14 days."],
+  },
+  {
+    key: "receptionist",
+    label: "Receptionist Assistant",
+    metric: "23 requests handled",
+    status: "3 bookings pending",
+    report: "Missed-call follow-up recovered two consultations. Three booking requests need staff assignment approval.",
+    messages: ["Any missed calls?", "Two missed calls were answered by text and one converted to a consultation request."],
+  },
+] as const;
+
+type AssistantKey = (typeof ASSISTANTS)[number]["key"];
+
+const CLIENT_STEPS = [
+  {
+    key: "services",
+    label: "Choose service",
+    title: "Select a service",
+    body: "Balayage refresh",
+    meta: "2 hr 15 min · from $225",
+  },
+  {
+    key: "time",
+    label: "Pick time",
+    title: "Pick a time",
+    body: "Thursday, 2:30 PM",
+    meta: "With Jordan · 24-hour opening",
+  },
+  {
+    key: "checkout",
+    label: "Confirm",
+    title: "Confirm visit",
+    body: "Wallet balance: $300",
+    meta: "Pay deposit from wallet and save card fees",
+  },
+] as const;
+
+type ClientStepKey = (typeof CLIENT_STEPS)[number]["key"];
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -107,17 +169,60 @@ function Row({ left, right, sub }: { left: string; right?: string; sub?: string 
   );
 }
 
-function ModulePreview({ moduleKey, accent }: { moduleKey: ModuleKey; accent: string }) {
+function BrandLink({
+  href,
+  title,
+  note,
+  accent,
+}: {
+  href: string;
+  title: string;
+  note: string;
+  accent: string;
+}) {
+  return (
+    <a href={href} className="group bg-white p-5 transition-colors hover:bg-surface-elevated">
+      <p className="font-serif text-lg font-medium">{title}</p>
+      <p className="mt-1 text-sm text-text-secondary">{note}</p>
+      <p className="mt-4 text-[11px] uppercase tracking-[0.12em]" style={{ color: accent }}>
+        Open sample
+      </p>
+    </a>
+  );
+}
+
+function ModulePreview({
+  moduleKey,
+  accent,
+  walletHref,
+  storeHref,
+  assistantKey,
+  setAssistantKey,
+  clientStep,
+  setClientStep,
+}: {
+  moduleKey: ModuleKey;
+  accent: string;
+  walletHref: string;
+  storeHref: string;
+  assistantKey: AssistantKey;
+  setAssistantKey: (key: AssistantKey) => void;
+  clientStep: ClientStepKey;
+  setClientStep: (key: ClientStepKey) => void;
+}) {
   if (moduleKey === "wallet") {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[0.85fr_1fr]">
         <div className="border border-border bg-white p-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Client wallet</p>
           <p className="mt-3 font-serif text-4xl font-medium">$300</p>
-          <p className="mt-1 text-xs text-text-secondary">Available balance</p>
+          <p className="mt-1 text-xs text-text-secondary">Sample available balance</p>
           <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-border">
             <div className="h-full" style={{ width: "72%", backgroundColor: accent }} />
           </div>
+          <a href={walletHref} className="mt-5 inline-block text-[11px] uppercase tracking-[0.12em]" style={{ color: accent }}>
+            Open live wallet sample
+          </a>
         </div>
         <div className="border border-border bg-white p-4">
           <Row left="Balayage checkout" right="$225.00" />
@@ -128,63 +233,152 @@ function ModulePreview({ moduleKey, accent }: { moduleKey: ModuleKey; accent: st
     );
   }
 
-  if (moduleKey === "inventory") {
-    return (
-      <div className="border border-border bg-white p-4">
-        <Row left="Lash adhesive" right="3 left" sub="Below threshold. Reorder draft ready for approval." />
-        <Row left="Toner 7N" right="Reorder" sub="Used faster than forecast this week." />
-        <Row left="Gloss trays" right="6 weeks" sub="Healthy cover based on recent POS movement." />
-      </div>
-    );
-  }
-
-  if (moduleKey === "growth") {
+  if (moduleKey === "store") {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="border border-border bg-white p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Openings</p>
-          <p className="mt-3 font-serif text-2xl font-medium">2:30 PM color slot</p>
-          <p className="mt-2 text-sm leading-relaxed text-text-secondary">Alerted 18 waitlist clients. 4 replies pending.</p>
+        {[
+          ["Gloss Revival Mask", "$38", "Recommended after color services."],
+          ["Scalp Reset Serum", "$42", "Attach to refresh appointments."],
+        ].map(([name, price, copy]) => (
+          <div key={name} className="border border-border bg-white p-4">
+            <div className="photo-frame mb-3 aspect-[4/3] w-full rounded-md border border-border" aria-hidden="true" />
+            <p className="font-serif text-lg font-medium">{name}</p>
+            <p className="mt-1 text-sm text-text-secondary">{copy}</p>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-sm font-medium">{price}</span>
+              <a href={storeHref} className="text-[11px] uppercase tracking-[0.12em]" style={{ color: accent }}>
+                Shop sample
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (moduleKey === "assistants") {
+    const active = ASSISTANTS.find((assistant) => assistant.key === assistantKey) ?? ASSISTANTS[0];
+    return (
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[0.78fr_1.22fr]">
+        <div className="border border-border bg-white p-3">
+          <div className="grid grid-cols-1 gap-1">
+            {ASSISTANTS.map((assistant) => {
+              const selected = assistant.key === assistantKey;
+              return (
+                <button
+                  key={assistant.key}
+                  type="button"
+                  onClick={() => setAssistantKey(assistant.key)}
+                  className="border px-3 py-2 text-left text-xs transition-colors"
+                  style={
+                    selected
+                      ? { borderColor: accent, color: accent, backgroundColor: "#fff" }
+                      : { borderColor: "transparent", color: "var(--color-text-secondary)" }
+                  }
+                >
+                  <span className="block font-medium">{assistant.label}</span>
+                  <span className="mt-0.5 block text-text-muted">{assistant.status}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="border border-border bg-white p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Rewards</p>
-          <p className="mt-3 font-serif text-2xl font-medium">Birthday gloss</p>
-          <p className="mt-2 text-sm leading-relaxed text-text-secondary">Scheduled for clients with birthdays this month.</p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="border border-border bg-white p-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Signal</p>
+              <p className="mt-2 font-serif text-xl font-medium">{active.metric}</p>
+            </div>
+            <div className="border border-border bg-white p-4 sm:col-span-2">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">One-page exec</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{active.report}</p>
+            </div>
+          </div>
+          <div className="border border-border bg-white p-4">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Chat</p>
+            <div className="mt-3 space-y-2">
+              <p className="max-w-[85%] rounded-xl bg-surface-elevated px-3 py-2 text-sm text-text-primary">{active.messages[0]}</p>
+              <p className="ml-auto max-w-[85%] rounded-xl px-3 py-2 text-sm text-white" style={{ backgroundColor: accent }}>
+                {active.messages[1]}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (moduleKey === "reviews") {
+  if (moduleKey === "client") {
+    const activeStep = CLIENT_STEPS.find((step) => step.key === clientStep) ?? CLIENT_STEPS[0];
     return (
-      <div className="border border-border bg-white p-4">
-        <Row left="Google review" right="5.0" sub="Best balayage I have ever had. The wallet checkout was so easy." />
-        <Row left="Website review" right="4.8" sub="Clean, calm, beautiful appointment experience." />
-        <Row left="Needs owner review" right="1" sub="Negative feedback routed before a public reply goes out." />
+      <div className="grid grid-cols-1 items-center gap-5 md:grid-cols-[0.78fr_1fr]">
+        <div className="mx-auto w-full max-w-[270px] rounded-[34px] border border-text-primary bg-text-primary p-2 shadow-sm">
+          <div className="min-h-[480px] rounded-[28px] bg-white p-4">
+            <div className="mx-auto mb-5 h-1.5 w-16 rounded-full bg-border" />
+            <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Client booking</p>
+            <h4 className="mt-2 font-serif text-2xl font-medium">{activeStep.title}</h4>
+            <div className="mt-5 rounded-2xl border border-border bg-surface-elevated p-4">
+              <p className="font-serif text-xl font-medium">{activeStep.body}</p>
+              <p className="mt-2 text-sm text-text-secondary">{activeStep.meta}</p>
+            </div>
+            <div className="mt-5 space-y-2">
+              {CLIENT_STEPS.map((step) => (
+                <button
+                  key={step.key}
+                  type="button"
+                  onClick={() => setClientStep(step.key)}
+                  className="flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left text-sm"
+                  style={
+                    step.key === clientStep
+                      ? { borderColor: accent, color: accent }
+                      : { borderColor: "var(--color-border)", color: "var(--color-text-secondary)" }
+                  }
+                >
+                  <span>{step.label}</span>
+                  <span>{step.key === clientStep ? "Current" : "View"}</span>
+                </button>
+              ))}
+            </div>
+            <button type="button" className="mt-5 w-full rounded-xl py-3 text-sm font-medium text-white" style={{ backgroundColor: accent }}>
+              Confirm appointment
+            </button>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <Row left="Mobile-first booking" right="3 taps" sub="Most appointment booking starts on a phone, so the client flow stays simple." />
+          <Row left="Wallet checkout" right="$300 sample balance" sub="Clients can apply wallet funds before checkout." />
+          <Row left="Smart follow-up" right="Automatic" sub="Confirmation, reminders, and post-visit review requests stay in the same operating system." />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-      {DASHBOARD_LINKS.map((link) => (
-        <div key={link.label} className="bg-white p-5">
-          <p className="font-serif text-lg font-medium">{link.label}</p>
-          <p className="mt-1 text-sm text-text-secondary">{link.note}</p>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2">
+      <BrandLink href={walletHref} title="Client wallet" note="Open a sample wallet with balance data." accent={accent} />
+      <BrandLink href={storeHref} title="Online store" note="Shop sample retail products from the live storefront." accent={accent} />
+      <div className="bg-white p-5">
+        <p className="font-serif text-lg font-medium">Opening fill</p>
+        <p className="mt-1 text-sm text-text-secondary">Alert waitlisted clients when a slot opens.</p>
+      </div>
+      <div className="bg-white p-5">
+        <p className="font-serif text-lg font-medium">Review queue</p>
+        <p className="mt-1 text-sm text-text-secondary">Positive drafts and manager alerts in one place.</p>
+      </div>
     </div>
   );
 }
 
 export default function BrandThemedDemo() {
-  const [query, setQuery] = useState("precisionlash.com");
+  const [query, setQuery] = useState("");
   const [brand, setBrand] = useState<Brand>(DEFAULT_BRAND);
   const [source, setSource] = useState<"brandfetch" | "fallback" | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [moduleKey, setModuleKey] = useState<ModuleKey>("dashboard");
+  const [assistantKey, setAssistantKey] = useState<AssistantKey>("financial");
+  const [clientStep, setClientStep] = useState<ClientStepKey>("services");
 
   async function applyBrand(e?: React.FormEvent) {
     e?.preventDefault();
@@ -211,15 +405,18 @@ export default function BrandThemedDemo() {
 
   const primary = brand.primaryColor;
   const accent = brand.accentColor;
-  const activeModule = MODULES.find((m) => m.key === moduleKey) ?? MODULES[0];
+  const activeModule = MODULES.find((module) => module.key === moduleKey) ?? MODULES[0];
+  const demoSalon = useMemo(() => encodeURIComponent(brand.name || "Demo Salon"), [brand.name]);
+  const walletHref = `/wallet?demo=1&salon=${demoSalon}&client=Maya%20Rivera`;
+  const storeHref = `/store?demo=1&salon=${demoSalon}`;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <form onSubmit={applyBrand} className="flex flex-col sm:flex-row gap-2 mb-3">
+      <form onSubmit={applyBrand} className="mb-3 flex flex-col gap-2 sm:flex-row">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="yourwebsite.com or @instagram"
+          placeholder="[Enter Your Website Here]"
           aria-label="Your website or Instagram"
           className="flex-1 rounded-md border border-border bg-white px-4 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary"
         />
@@ -229,14 +426,14 @@ export default function BrandThemedDemo() {
           className="rounded-md px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
           style={{ backgroundColor: accent }}
         >
-          {loading ? "Reading your brand…" : "Theme my demo"}
+          {loading ? "Reading your brand..." : "Theme my demo"}
         </button>
       </form>
 
-      {error && <p className="text-xs text-error mb-3">{error}</p>}
-      {note && !error && <p className="text-xs text-text-secondary mb-3">{note}</p>}
+      {error && <p className="mb-3 text-xs text-error">{error}</p>}
+      {note && !error && <p className="mb-3 text-xs text-text-secondary">{note}</p>}
       {source === "brandfetch" && !note && (
-        <p className="text-xs text-text-secondary mb-3">Pulled live from Brandfetch.</p>
+        <p className="mb-3 text-xs text-text-secondary">Pulled live from Brandfetch.</p>
       )}
 
       <div
@@ -252,10 +449,7 @@ export default function BrandThemedDemo() {
                 <p className="text-xs uppercase tracking-[0.16em] text-text-muted">Powered by JIDOKA Cosmetics OS</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <span className="border border-border px-3 py-1.5 text-xs text-text-secondary">Owner dashboard</span>
-              <span className="px-3 py-1.5 text-xs text-white" style={{ backgroundColor: primary }}>Live brand skin</span>
-            </div>
+            <p className="text-xs uppercase tracking-[0.16em] text-text-secondary">Owner dashboard</p>
           </div>
         </div>
 
@@ -304,7 +498,16 @@ export default function BrandThemedDemo() {
                   ))}
                 </div>
               </div>
-              <ModulePreview moduleKey={moduleKey} accent={accent} />
+              <ModulePreview
+                moduleKey={moduleKey}
+                accent={accent || primary}
+                walletHref={walletHref}
+                storeHref={storeHref}
+                assistantKey={assistantKey}
+                setAssistantKey={setAssistantKey}
+                clientStep={clientStep}
+                setClientStep={setClientStep}
+              />
             </div>
           </div>
         </div>

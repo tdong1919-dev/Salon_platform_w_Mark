@@ -1,7 +1,7 @@
 "use client";
 /**
  * InventoryForm — a team member flags a low product (POST /api/inventory),
- * then can ask the inventory agent for the cheapest reputable reorder source
+ * then can ask the inventory assistant for the cheapest reputable reorder source
  * (POST /api/inventory/suggest).
  */
 import { useState } from "react";

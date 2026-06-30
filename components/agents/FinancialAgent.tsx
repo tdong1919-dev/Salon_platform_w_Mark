@@ -1,6 +1,6 @@
 "use client";
 /**
- * FinancialAgent — chat UI for the Claude-powered financial agent. Sends the
+ * FinancialAgent — chat UI for the Claude-powered financial assistant. Sends the
  * running conversation to /api/financial-agent and renders the reply. The
  * server hides the tool-use loop (payroll math + sheet writes); the client only
  * stores plain {role, content} turns.
@@ -20,7 +20,7 @@ export default function FinancialAgent() {
     {
       role: "assistant",
       content:
-        "Hi — I'm your financial agent. I can set commission rates, run payroll, and suggest ways to lift your bottom line. What would you like to do?",
+        "Hi — I'm your financial assistant. I can set commission rates, run payroll, and suggest ways to lift your bottom line. What would you like to do?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -111,7 +111,7 @@ export default function FinancialAgent() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about commissions, payroll, or margin…"
-          aria-label="Message the financial agent"
+          aria-label="Message the financial assistant"
           className="flex-1 rounded-md border border-border bg-white px-4 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary"
         />
         <button

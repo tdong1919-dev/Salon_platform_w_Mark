@@ -13,6 +13,7 @@
  * client can render the same way regardless of source.
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { appendSheetRow } from '@/lib/sheets'
 
 export const runtime = 'nodejs'
 
@@ -143,9 +144,41 @@ function titleize(s: string): string {
     .join(' ')
 }
 
+async function recordThemeDemoAttempt(
+  request: NextRequest,
+  input: string,
+  normalized: { domain: string | null; handle: string | null; kind: 'website' | 'instagram' | 'name' | 'empty' },
+  result: BrandResult,
+) {
+  const headers = [
+    'Date',
+    'Input',
+    'Input type',
+    'Domain',
+    'Instagram handle',
+    'Brand name',
+    'Source',
+    'Referrer',
+    'User agent',
+  ]
+
+  await appendSheetRow('Theme Demo Tries', headers, [
+    new Date().toISOString(),
+    input,
+    normalized.kind,
+    normalized.domain || '',
+    normalized.handle || '',
+    result.brand.name,
+    result.source,
+    request.headers.get('referer') || '',
+    request.headers.get('user-agent') || '',
+  ]).catch(() => undefined)
+}
+
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get('q') ?? ''
-  const { domain, handle, kind } = normalizeInput(q)
+  const normalized = normalizeInput(q)
+  const { domain, handle, kind } = normalized
 
   if (kind === 'empty') {
     return NextResponse.json({ error: 'Provide a website, @instagram, or business name via ?q=' }, { status: 400 })
@@ -173,6 +206,7 @@ export async function GET(request: NextRequest) {
           fontFamily: titleFont,
         },
       }
+      await recordThemeDemoAttempt(request, q, normalized, result)
       return NextResponse.json(result)
     }
   }
@@ -200,5 +234,6 @@ export async function GET(request: NextRequest) {
     },
     note,
   }
+  await recordThemeDemoAttempt(request, q, normalized, result)
   return NextResponse.json(result)
 }

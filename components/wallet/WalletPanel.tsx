@@ -9,18 +9,33 @@ import { useCallback, useEffect, useState } from "react";
 const inputClass =
   "w-full rounded-md border border-border bg-white px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary placeholder:text-text-muted";
 
-export default function WalletPanel({ initialSalon = "", initialClient = "", loaded = false }: { initialSalon?: string; initialClient?: string; loaded?: boolean }) {
-  const [salon, setSalon] = useState(initialSalon);
-  const [client, setClient] = useState(initialClient);
+export default function WalletPanel({
+  initialSalon = "",
+  initialClient = "",
+  loaded = false,
+  demo = false,
+}: {
+  initialSalon?: string;
+  initialClient?: string;
+  loaded?: boolean;
+  demo?: boolean;
+}) {
+  const [salon, setSalon] = useState(initialSalon || (demo ? "Precision Lash" : ""));
+  const [client, setClient] = useState(initialClient || (demo ? "Maya Rivera" : ""));
   const [amount, setAmount] = useState("100");
-  const [spendAmount, setSpendAmount] = useState("");
-  const [balance, setBalance] = useState<number | null>(null);
+  const [spendAmount, setSpendAmount] = useState(demo ? "225" : "");
+  const [balance, setBalance] = useState<number | null>(demo ? 300 : null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(loaded ? "Payment received — balance updates within a few seconds (ACH may take a few days to clear)." : null);
 
   const refreshBalance = useCallback(async () => {
     if (!salon.trim() || !client.trim()) return;
+    if (demo) {
+      setBalance((current) => current ?? 300);
+      setInfo("Sample balance refreshed.");
+      return;
+    }
     try {
       const res = await fetch(`/api/wallet/balance?salon=${encodeURIComponent(salon)}&client=${encodeURIComponent(client)}`);
       const json = await res.json().catch(() => ({}));
@@ -28,7 +43,7 @@ export default function WalletPanel({ initialSalon = "", initialClient = "", loa
     } catch {
       /* ignore */
     }
-  }, [salon, client]);
+  }, [salon, client, demo]);
 
   useEffect(() => {
     if (initialSalon && initialClient) refreshBalance();
@@ -38,6 +53,11 @@ export default function WalletPanel({ initialSalon = "", initialClient = "", loa
     setError(null);
     if (!salon.trim() || !client.trim()) {
       setError("Enter the salon and your name/email.");
+      return;
+    }
+    if (demo) {
+      setBalance((current) => (current ?? 0) + Number(amount || 0));
+      setInfo(`Sample load added $${Number(amount || 0).toFixed(2)} to the wallet.`);
       return;
     }
     setBusy(true);
@@ -62,6 +82,17 @@ export default function WalletPanel({ initialSalon = "", initialClient = "", loa
     const amt = Number(spendAmount);
     if (!salon.trim() || !client.trim() || !amt) {
       setError("Enter salon, client, and an amount to pay.");
+      return;
+    }
+    if (demo) {
+      const current = balance ?? 300;
+      if (amt > current) {
+        setError(`Sample wallet only has $${current.toFixed(2)} available.`);
+        return;
+      }
+      setBalance(current - amt);
+      setSpendAmount("");
+      setInfo("Sample payment complete — no card fee.");
       return;
     }
     setBusy(true);

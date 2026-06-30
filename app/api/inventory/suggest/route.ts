@@ -1,12 +1,12 @@
 /**
- * POST /api/inventory/suggest — the inventory agent searches reputable online
+ * POST /api/inventory/suggest — the inventory assistant searches reputable online
  * suppliers for a product and suggests the cheapest place to reorder. Uses
  * Claude with web search; returns a graceful message if no key is configured.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { runClaudeWithSearch } from "@/lib/claude";
 
-const SYSTEM = `You are the inventory agent for a salon supply manager. Given a product, search the web for reputable suppliers (manufacturer-authorized distributors, established beauty/salon supply retailers — not sketchy marketplaces) and recommend where to reorder for the best price.
+const SYSTEM = `You are the inventory assistant for a salon supply manager. Given a product, search the web for reputable suppliers (manufacturer-authorized distributors, established beauty/salon supply retailers — not sketchy marketplaces) and recommend where to reorder for the best price.
 
 Return a short, scannable answer:
 - 2-4 supplier options as "Supplier — approx price/size — why it's reputable", cheapest first.

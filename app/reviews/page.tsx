@@ -4,8 +4,8 @@ import ReviewForm from "@/components/agents/ReviewForm";
 import { readSheetTab } from "@/lib/gviz";
 
 export const metadata: Metadata = {
-  title: "Reviews — JIDOKA Cosmetics OS",
-  description: "Every review from Google, the website, and old booking sites, gathered in one place.",
+  title: "Reviews Assistant — JIDOKA Cosmetics OS",
+  description: "Every review from Google, the website, and old booking sites, gathered in one place with smart response workflows.",
 };
 
 export const revalidate = 300;
@@ -45,9 +45,9 @@ export default async function ReviewsPage() {
 
   return (
     <PageShell
-      eyebrow="Reputation · Reviews"
+      eyebrow="Assistant · Reviews"
       title="What clients are saying."
-      intro="Every review — from Google, your website, and old booking tools — gathered in one place, so your best words live where new clients see them."
+      intro="Every review — from Google, your website, and old booking tools — gathered in one place. Positive reviews get unique response drafts, reviews under 3 stars get a professional manager follow-up, and the assigned owner or manager is notified."
       note={isSample ? "Showing sample reviews. Connect SHEETS_SHEET_ID (link-view) and add a Reviews tab to show your own." : undefined}
     >
       <div className="mb-6 flex items-baseline gap-3">

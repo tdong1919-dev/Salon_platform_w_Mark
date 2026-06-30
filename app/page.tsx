@@ -16,33 +16,15 @@ const BOTTLENECKS = [
   "Complaints with nowhere to go",
   "Google reviews going unanswered",
   "Reviews scattered across sites",
-  "Rewards & promos too manual to run",
 ];
 
 const PILLARS = [
   {
-    name: "Payments & financials",
+    name: "Payments & POS",
     items: [
       {
         title: "Stripe wallet checkout",
         body: "Prepaid client wallets, powered by Stripe, move regulars off card swipes and cut merchant fees — with cards kept as a guest fallback.",
-      },
-      {
-        title: "Financial agent",
-        body: "Chat to update commissions, run payroll, and review your numbers — plus monthly, plain-English advice on lifting your bottom line.",
-      },
-    ],
-  },
-  {
-    name: "Inventory & operations",
-    items: [
-      {
-        title: "Inventory agent",
-        body: "Staff flag a low product; the agent alerts whoever orders, scans reputable suppliers for the best price (logging into your vendor accounts when needed), and files each order as COGS or Supplies for easy taxes.",
-      },
-      {
-        title: "One customizable platform",
-        body: "Every tool in a single place — no relearning ten apps. Add or remove modules so the OS fits your salon, not the other way around.",
       },
       {
         title: "Online store",
@@ -51,19 +33,36 @@ const PILLARS = [
     ],
   },
   {
+    name: "Inventory & operations",
+    items: [
+      {
+        title: "Inventory Assistant",
+        body: "Staff flag a low product; the assistant alerts whoever orders, scans reputable suppliers for the best price, and files each order as COGS or Supplies for easier taxes.",
+      },
+      {
+        title: "One customizable platform",
+        body: "Every tool in a single place — no relearning ten apps. Add or remove modules so the OS fits your salon, not the other way around.",
+      },
+      {
+        title: "Upsell cues",
+        body: "Your team is notified the moment a client is a strong candidate for an upgrade, add-on, or retail product.",
+      },
+    ],
+  },
+  {
     name: "Marketing & intelligence",
     items: [
       {
-        title: "Growth suite",
-        body: "Smart scheduling, analytics, Brand Brain, and comment-to-DM automation — all in your brand. (TikTok & LinkedIn coming soon.)",
+        title: "Financial Assistant",
+        body: "Chat to update commissions, run payroll, review your numbers, and get monthly plain-English advice on lifting your bottom line.",
       },
       {
-        title: "Industry intelligence agent",
+        title: "Industry Intelligence Assistant",
         body: "A monthly, executive one-page report on what's trending and what competitors are doing in your exact niche — informed by your Brand Brain and services.",
       },
       {
-        title: "Rewards & promotions",
-        body: "Build and schedule programs — birthdays, Mother's Day, major holidays — and target the right clients with the right offer automatically.",
+        title: "Reviews Assistant",
+        body: "Scans Google Business and old booking services, imports reviews into the OS, writes unique replies to positive reviews, escalates reviews under 3 stars with a professional manager follow-up, and notifies the assigned owner or manager.",
       },
     ],
   },
@@ -71,12 +70,12 @@ const PILLARS = [
     name: "Clients & retention",
     items: [
       {
-        title: "Re-engagement agent",
-        body: "A daily list of clients overdue for each service, pulled from their portal — visit history, payments, reviews, and files, all in one place.",
+        title: "Receptionist Assistant",
+        body: "Supports missed calls, booking requests, and client questions so the front desk has fewer interruptions during services.",
       },
       {
-        title: "Upsell cues",
-        body: "Your team is notified the moment a client is a strong candidate for an upgrade, add-on, or retail product.",
+        title: "Re-engagement workflows",
+        body: "A daily list of clients overdue for each service, pulled from their portal — visit history, payments, reviews, and files, all in one place.",
       },
       {
         title: "Last-minute fills",
@@ -85,10 +84,6 @@ const PILLARS = [
       {
         title: "Speak to a manager",
         body: "Clients file complaints in-app instead of cornering the front desk. The owner/manager is alerted and re-pinged at 24 hours until the ticket is closed.",
-      },
-      {
-        title: "Review management agent",
-        body: "Replies to Google reviews professionally and escalates anything negative for your sign-off before it posts.",
       },
       {
         title: "Review hub",
@@ -101,8 +96,16 @@ const PILLARS = [
 const LAUNCH_STEPS = [
   "Theme the booking experience to your brand.",
   "Import services, staff, hours, and checkout rules.",
-  "Activate the wallet, rewards, rebooking, and upsell cues.",
-  "Switch on the financial, inventory, marketing, and review agents.",
+  "Activate the wallet, rebooking, and upsell cues.",
+  "Switch on the financial, inventory, reviews, intelligence, and receptionist assistants.",
+];
+
+const ASSISTANT_ROBOTS = [
+  { name: "Financial", role: "Payroll + margin", color: "#4B7A63" },
+  { name: "Inventory", role: "Stock + reorder", color: "#9A7B4F" },
+  { name: "Reviews", role: "Reputation", color: "#B05B49" },
+  { name: "Intelligence", role: "Market briefings", color: "#45657C" },
+  { name: "Receptionist", role: "Booking support", color: "#7A5C91" },
 ];
 
 function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
@@ -124,6 +127,31 @@ function PhotoFrame({ caption, className = "", ratioClass = "aspect-[4/3]" }: { 
   );
 }
 
+function AssistantRobotShowcase() {
+  return (
+    <div className="assistant-robot-stage mt-8 grid grid-cols-1 gap-3 sm:grid-cols-5">
+      {ASSISTANT_ROBOTS.map((robot, index) => (
+        <div key={robot.name} className="assistant-robot-card" style={{ animationDelay: `${index * 0.18}s` }}>
+          <div className="assistant-robot" aria-hidden="true" style={{ animationDelay: `${index * 0.12}s` }}>
+            <div className="assistant-robot-antenna" style={{ backgroundColor: robot.color }} />
+            <div className="assistant-robot-head" style={{ borderColor: robot.color }}>
+              <span />
+              <span />
+            </div>
+            <div className="assistant-robot-body" style={{ backgroundColor: robot.color }}>
+              <div className="assistant-robot-panel" />
+            </div>
+            <div className="assistant-robot-arm assistant-robot-arm-left" style={{ backgroundColor: robot.color }} />
+            <div className="assistant-robot-arm assistant-robot-arm-right" style={{ backgroundColor: robot.color }} />
+          </div>
+          <p className="mt-3 font-serif text-lg font-medium">{robot.name} Assistant</p>
+          <p className="mt-1 text-xs uppercase tracking-[0.12em] text-text-muted">{robot.role}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function JidokaLandingPage() {
   return (
     <main>
@@ -137,7 +165,7 @@ export default function JidokaLandingPage() {
             <a href="/account" className="hidden text-[12px] uppercase tracking-[0.14em] text-text-secondary hover:text-text-primary sm:inline">
               Sign in
             </a>
-            <DemoCTA label="Book a demo" variant="outline" />
+            <DemoCTA label="Start my upgrade" variant="outline" />
           </div>
         </div>
       </header>
@@ -150,11 +178,11 @@ export default function JidokaLandingPage() {
             A more beautiful way to run your salon.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            JIDOKA Cosmetics OS puts an intelligent agent on every bottleneck — payments, inventory,
-            payroll, marketing, reviews, and retention — in one customizable platform.
+            JIDOKA Cosmetics Operating System gives you an assistant for every obstacle- payments,
+            inventory, payroll, marketing, reviews, and retention in one customizable platform.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <DemoCTA label="Book a free demo" variant="primary" />
+            <DemoCTA label="Start my salon upgrade" variant="primary" />
             <a
               href="#calculator"
               className="rounded-sm border border-text-primary/30 px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-text-primary transition-colors hover:bg-black/[0.04]"
@@ -172,7 +200,7 @@ export default function JidokaLandingPage() {
           <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">See it in your brand — every feature.</h2>
           <p className="mt-4 leading-relaxed text-text-secondary">
             Drop in your website or Instagram. We pull your logo, colors, and fonts, then walk you through
-            booking, wallet checkout, rewards, marketing, the AI receptionist, and inventory — themed to you.
+            booking, wallet checkout, retail, the receptionist assistant, inventory, and the assistant hub — themed to you.
           </p>
         </div>
         <BrandThemedDemo />
@@ -185,7 +213,8 @@ export default function JidokaLandingPage() {
           <div>
             <Eyebrow>Our story</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
-              Built by salon owners, for salon owners.
+              Built by salon owners,
+              <span className="block">for salon owners.</span>
             </h2>
             <p className="mt-5 leading-relaxed text-text-secondary">
               We lived the 3% card fees, the missed calls during a color, and the juggling of ten tools that
@@ -204,10 +233,10 @@ export default function JidokaLandingPage() {
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <Eyebrow>The daily grind</Eyebrow>
           <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
-            You didn&apos;t open a salon to fight your software.
+            You didn&apos;t open a salon to be more stressed.
           </h2>
           <p className="mt-4 leading-relaxed text-text-secondary">
-            The bottlenecks that quietly drain your margin, your time, and your energy — every single week.
+            The uphill battle that quietly drain your margin, your time, and your energy — every single week.
           </p>
         </div>
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-2">
@@ -220,15 +249,16 @@ export default function JidokaLandingPage() {
         </div>
       </Section>
 
-      {/* The OS — an agent for every bottleneck */}
+      {/* The OS — an assistant for every obstacle */}
       <Section className="mt-28">
         <div className="mx-auto mb-12 max-w-2xl text-center">
-          <Eyebrow>One OS, many agents</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An agent for every bottleneck.</h2>
+          <Eyebrow>One OS, five assistants</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An assistant for every obstacle.</h2>
           <p className="mt-4 leading-relaxed text-text-secondary">
-            JIDOKA Cosmetics OS puts intelligent agents on the work that drains your day — and lets you add,
+            JIDOKA Cosmetics OS puts intelligent assistants on the work that drains your day — and lets you add,
             remove, and customize each one to fit how your salon actually runs.
           </p>
+          <AssistantRobotShowcase />
         </div>
 
         <div className="space-y-14">
@@ -281,7 +311,7 @@ export default function JidokaLandingPage() {
             <Eyebrow>Launch sequence</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">From demo to operating system.</h2>
             <p className="mt-5 text-sm leading-relaxed text-text-secondary">
-              Start with the fee-savings wedge, then switch on agents one by one as more of the salon moves
+              Start with the fee-savings wedge, then switch on assistants one by one as more of the salon moves
               onto the platform — at your pace.
             </p>
           </div>
@@ -303,12 +333,12 @@ export default function JidokaLandingPage() {
         <div className="overflow-hidden rounded-lg border border-border">
           <PhotoFrame caption="Closing image — your space, your brand" ratioClass="aspect-[16/6]" className="rounded-none border-0" />
           <div className="bg-surface-elevated px-6 py-12 text-center">
-            <h2 className="font-serif text-3xl font-medium sm:text-4xl">One OS. An agent for every bottleneck.</h2>
+            <h2 className="font-serif text-3xl font-medium sm:text-4xl">One OS. An assistant for every obstacle.</h2>
             <p className="mx-auto mt-4 max-w-lg leading-relaxed text-text-secondary">
               Themed to your brand, customizable to your salon, and built to protect your margin. See it on your own business.
             </p>
             <div className="mt-8 flex justify-center">
-              <DemoCTA label="Book a free demo" variant="primary" />
+              <DemoCTA label="Start my salon upgrade" variant="primary" />
             </div>
           </div>
         </div>
@@ -316,16 +346,15 @@ export default function JidokaLandingPage() {
 
       <footer className="border-t border-border">
         <Section className="py-12">
-          <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Explore the agents</p>
+          <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Explore the assistants</p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[
-              { href: "/financials", label: "Financial agent" },
-              { href: "/inventory", label: "Inventory agent" },
+              { href: "/financials", label: "Financial Assistant" },
+              { href: "/inventory", label: "Inventory Assistant" },
               { href: "/intelligence", label: "Industry intelligence" },
               { href: "/clients", label: "Client re-engagement" },
               { href: "/openings", label: "Fill openings" },
               { href: "/waitlist", label: "Client waitlist" },
-              { href: "/promotions", label: "Rewards & promotions" },
               { href: "/reviews", label: "Reviews hub" },
               { href: "/speak-to-a-manager", label: "Speak to a manager" },
               { href: "/wallet", label: "Client wallet" },
@@ -337,7 +366,7 @@ export default function JidokaLandingPage() {
               </a>
             ))}
           </div>
-          <p className="mt-8 text-xs text-text-muted">JIDOKA Cosmetics OS — an agent for every salon bottleneck.</p>
+          <p className="mt-8 text-xs text-text-muted">JIDOKA Cosmetics OS — an assistant for every salon obstacle.</p>
         </Section>
       </footer>
     </main>

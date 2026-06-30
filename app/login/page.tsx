@@ -18,7 +18,7 @@ export default async function LoginPage({
     <PageShell
       eyebrow="Account"
       title="Sign in to your salon."
-      intro="Run your agents, payments, and store from one place. We use a passwordless link — enter your email and we'll send you a secure sign-in link."
+      intro="Run your assistants, payments, and store from one place. We use a passwordless link — enter your email and we'll send you a secure sign-in link."
       note="First time? Add your salon name when prompted and we'll create your account."
     >
       {expired && <p className="mb-5 rounded-md border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-warning">That link expired — request a fresh one below.</p>}

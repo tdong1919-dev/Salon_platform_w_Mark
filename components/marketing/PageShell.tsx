@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** Shared chrome for the JIDOKA feature/agent pages — wordmark header + titled section. */
+/** Shared chrome for the JIDOKA feature/assistant pages — wordmark header + titled section. */
 export default function PageShell({
   eyebrow,
   title,

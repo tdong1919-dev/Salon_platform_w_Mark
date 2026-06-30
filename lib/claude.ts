@@ -1,5 +1,5 @@
 /**
- * Shared Claude helper for the read-only "report" agents (inventory reorder
+ * Shared Claude helper for the read-only "report" assistants (inventory reorder
  * suggestions, industry intelligence). Runs a single prompt with the web_search
  * server tool and adaptive thinking, handling the pause_turn continuation loop.
  * Returns a graceful error if ANTHROPIC_API_KEY isn't set.

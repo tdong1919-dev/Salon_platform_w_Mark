@@ -16,15 +16,16 @@ export default async function WalletPage({
   const salon = typeof sp.salon === "string" ? sp.salon : "";
   const client = typeof sp.client === "string" ? sp.client : "";
   const loaded = sp.loaded === "1";
+  const demo = sp.demo === "1";
 
   return (
     <PageShell
       eyebrow="Payments · Client wallet"
       title="Load once. Pay from balance."
       intro="Top up your wallet by bank transfer (ACH) or card and pay for visits straight from your balance — no card fee on each visit, and faster checkout. Funds settle directly to your salon's own Stripe."
-      note="MVP: balances are an append-only ledger in a Wallet tab. ACH loads credit once the bank debit clears. Needs Stripe configured + the salon connected at /settings/stripe."
+      note={demo ? "Sample mode: actions are simulated so salons can explore the client wallet without Stripe setup." : "MVP: balances are an append-only ledger in a Wallet tab. ACH loads credit once the bank debit clears. Needs Stripe configured + the salon connected at /settings/stripe."}
     >
-      <WalletPanel initialSalon={salon} initialClient={client} loaded={loaded} />
+      <WalletPanel initialSalon={salon} initialClient={client} loaded={loaded} demo={demo} />
     </PageShell>
   );
 }

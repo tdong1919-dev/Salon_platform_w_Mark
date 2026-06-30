@@ -20,9 +20,9 @@ export default async function ClientsPage() {
 
   return (
     <PageShell
-      eyebrow="Agent · Retention"
+      eyebrow="Assistant · Retention"
       title="Bring lapsed clients back."
-      intro="Every day, the agent surfaces clients who are overdue to rebook — based on each service's natural interval — so your front desk has a ready list to reach out to. A daily email digest can go to whoever runs outreach."
+      intro="Every day, the assistant surfaces clients who are overdue to rebook — based on each service's natural interval — so your front desk has a ready list to reach out to. A daily email digest can go to whoever runs outreach."
       note="Clients live in a Clients tab (fed by your booking system later; add them below for now). The daily digest runs at /api/reengagement/digest with CRON_SECRET. Reading the list needs SHEETS_SHEET_ID + link-view sharing."
     >
       <div className="mb-8">

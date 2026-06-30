@@ -20,7 +20,7 @@ export const maxDuration = 60;
 
 const MODEL = "claude-opus-4-8";
 
-const SYSTEM = `You are the Financial Agent inside JIDOKA Cosmetics OS — a financial assistant for salon, spa, and medspa owners. You help with commission structures, payroll calculations, and plain-English advice to improve the bottom line.
+const SYSTEM = `You are the Financial Assistant inside JIDOKA Cosmetics OS — a financial assistant for salon, spa, and medspa owners. You help with commission structures, payroll calculations, and plain-English advice to improve the bottom line.
 
 Rules:
 - For ANY payroll or commission arithmetic, call the calculate_payroll tool. Never do the math yourself.
@@ -153,14 +153,14 @@ async function runTool(name: string, input: Record<string, unknown>, salon: stri
 export async function POST(request: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(
-      { error: "The financial agent isn't configured yet — ANTHROPIC_API_KEY is not set." },
+      { error: "The financial assistant isn't configured yet — ANTHROPIC_API_KEY is not set." },
       { status: 503 },
     );
   }
 
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Please sign in to use the financial agent." }, { status: 401 });
+    return NextResponse.json({ error: "Please sign in to use the financial assistant." }, { status: 401 });
   }
 
   const body = await request.json().catch(() => ({}));
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
     if (!reply) reply = "I wasn't able to finish that — could you rephrase or give me the numbers again?";
     return NextResponse.json({ reply });
   } catch (err) {
-    const message = err instanceof Anthropic.APIError ? `${err.status}: ${err.message}` : "agent error";
-    return NextResponse.json({ error: `Financial agent failed (${message}).` }, { status: 502 });
+    const message = err instanceof Anthropic.APIError ? `${err.status}: ${err.message}` : "assistant error";
+    return NextResponse.json({ error: `Financial assistant failed (${message}).` }, { status: 502 });
   }
 }

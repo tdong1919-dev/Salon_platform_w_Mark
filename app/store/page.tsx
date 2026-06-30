@@ -10,6 +10,27 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
+const SAMPLE_PRODUCTS = [
+  {
+    name: "Gloss Revival Mask",
+    price: 38,
+    description: "Color-safe hydration clients can use between gloss appointments.",
+    image: "",
+  },
+  {
+    name: "Scalp Reset Serum",
+    price: 42,
+    description: "A lightweight scalp treatment to attach to refresh appointments.",
+    image: "",
+  },
+  {
+    name: "Silk Finish Oil",
+    price: 34,
+    description: "The take-home finish for smooth styling after color services.",
+    image: "",
+  },
+];
+
 export default async function StorePage({
   searchParams,
 }: {
@@ -18,23 +39,26 @@ export default async function StorePage({
   const sp = await searchParams;
   const salon = typeof sp.salon === "string" ? sp.salon : "";
   const purchased = sp.purchased === "1";
+  const demo = sp.demo === "1";
 
-  const rows = await readSheetTab("Products");
-  const products = rows
-    .filter((r) => (r.Active || "yes").toLowerCase() !== "no")
-    .filter((r) => (salon ? (r.Salon || "").trim().toLowerCase() === salon.trim().toLowerCase() : true))
-    .map((r) => ({ name: r.Name || "", price: Number(r.Price) || 0, description: r.Description || "", image: r.Image || "" }))
-    .filter((p) => p.name && p.price > 0);
+  const rows = demo ? [] : await readSheetTab("Products");
+  const products = demo
+    ? SAMPLE_PRODUCTS
+    : rows
+      .filter((r) => (r.Active || "yes").toLowerCase() !== "no")
+      .filter((r) => (salon ? (r.Salon || "").trim().toLowerCase() === salon.trim().toLowerCase() : true))
+      .map((r) => ({ name: r.Name || "", price: Number(r.Price) || 0, description: r.Description || "", image: r.Image || "" }))
+      .filter((p) => p.name && p.price > 0);
 
   return (
     <PageShell
       eyebrow="Retail · Shop"
       title="Take the salon home."
       intro="Sell your at-home products online and ring up retail in-salon from the same catalog. Checkout settles directly to the salon's own Stripe — extend the experience and the revenue between visits."
-      note="Products live in a Products tab; orders are recorded to an Orders tab via the Stripe webhook. Shop a specific salon with ?salon=Name in the URL."
+      note={demo ? "Sample mode: products and purchases are simulated for the live demo." : "Products live in a Products tab; orders are recorded to an Orders tab via the Stripe webhook. Shop a specific salon with ?salon=Name in the URL."}
     >
       {purchased && <p className="mb-5 rounded-md border border-success/40 bg-success/10 px-4 py-3 text-sm text-success">Thank you for your order!</p>}
-      <Storefront products={products} salon={salon} />
+      <Storefront products={products} salon={salon} demo={demo} />
     </PageShell>
   );
 }
