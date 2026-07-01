@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -74,41 +75,23 @@ export default function AboutPage() {
       </Section>
 
       <Section className="pb-24">
-        <div className="rounded-lg border border-border bg-surface-elevated p-6 sm:p-10">
-          <Eyebrow>JIDOKA Group</Eyebrow>
-          <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <div className="inline-flex min-w-[220px] flex-col rounded-md border border-text-primary bg-white px-6 py-5 shadow-sm">
-                <span className="font-serif text-4xl font-medium leading-none tracking-wide">Jidoka</span>
-                <span className="mt-1 text-[12px] uppercase tracking-[0.38em] text-text-secondary">Group</span>
-              </div>
-              <h2 className="mt-8 font-serif text-4xl font-medium leading-tight">
-                Consulting and implementation for businesses that want to become more efficient, competitive, and profitable.
-              </h2>
-            </div>
-            <div className="space-y-4 text-sm leading-relaxed text-text-secondary">
-              <p>
-                JIDOKA Group is a collective of experts like Crystal across different verticals and industries,
-                offering consulting plus implementation services that help businesses operate with more clarity
-                and less waste.
-              </p>
-              <p>
-                JIDOKA means automation with a human touch. That is exactly JIDOKA&apos;s mission: not to replace
-                humans with robots, but to help founders fearlessly live a life where they can connect with what
-                and how they actually want to live by making their business work for them.
-              </p>
-              <div className="pt-3">
-                <a
-                  href="https://jidokagroup.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex rounded-sm bg-gradient-brand px-6 py-3 text-[12px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
-                >
-                  Visit JidokaGroup.com
-                </a>
-              </div>
-            </div>
-          </div>
+        <div className="rounded-lg border border-border bg-white p-8 sm:p-12">
+          <a
+            href="https://jidokagroup.com"
+            target="_blank"
+            rel="noreferrer"
+            className="mx-auto block w-full max-w-[440px]"
+            aria-label="Visit Jidoka Group"
+          >
+            <Image
+              src="/jidoka-group-logo.png"
+              alt="Jidoka Group"
+              width={440}
+              height={132}
+              className="h-auto w-full"
+              priority={false}
+            />
+          </a>
         </div>
       </Section>
     </main>

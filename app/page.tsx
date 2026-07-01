@@ -1,6 +1,5 @@
 import SavingsCalculator from "@/components/marketing/SavingsCalculator";
 import BrandThemedDemo from "@/components/marketing/BrandThemedDemo";
-import ClientBookingDemo from "@/components/marketing/ClientBookingDemo";
 import DemoCTA from "@/components/marketing/DemoCTA";
 
 const BOTTLENECKS = [
@@ -19,23 +18,13 @@ const BOTTLENECKS = [
   "Reviews scattered across sites",
 ];
 
-type PillarVisualType = "checkout" | "upsell" | "financial" | "opening";
+type PillarVisualType = "upsell" | "financial" | "opening";
 
 const PILLARS: {
   name: string;
   visual: PillarVisualType;
   items: { title: string; body: string }[];
 }[] = [
-  {
-    name: "Payments & POS",
-    visual: "checkout",
-    items: [
-      {
-        title: "Stripe wallet checkout",
-        body: "Prepaid client wallets, powered by Stripe, move regulars off card swipes and cut merchant fees — with cards kept as a guest fallback.",
-      },
-    ],
-  },
   {
     name: "Inventory & operations",
     visual: "upsell",
@@ -121,6 +110,7 @@ const CLIENT_NOTIFICATIONS = [
 ];
 
 const SUBSCRIPTION_URL = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_URL || "/settings/stripe";
+const CRYSTAL_CALENDLY_URL = process.env.NEXT_PUBLIC_CRYSTAL_CALENDLY_URL || "https://calendly.com/crystalthuydong";
 
 function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   return <section id={id} className={`max-w-6xl mx-auto px-5 ${className}`}>{children}</section>;
@@ -128,6 +118,17 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">{children}</p>;
+}
+
+function TrialButton({ label = "Start free 7 day trial" }: { label?: string }) {
+  return (
+    <a
+      href={SUBSCRIPTION_URL}
+      className="inline-flex rounded-sm bg-gradient-brand px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+    >
+      {label}
+    </a>
+  );
 }
 
 /** Elegant linen placeholder — swap the inner content for an <img> when photos are ready. */
@@ -199,24 +200,6 @@ function FloatingCuePhone() {
 }
 
 function PillarVisual({ type }: { type: PillarVisualType }) {
-  if (type === "checkout") {
-    return (
-      <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
-        <PhoneShell>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Checkout</p>
-          <h4 className="mt-2 font-serif text-2xl font-medium">Balayage refresh</h4>
-          <div className="mt-5 space-y-3 rounded-2xl border border-border bg-surface p-4">
-            <div className="flex justify-between text-sm"><span>Service</span><span>$225</span></div>
-            <div className="flex justify-between text-sm"><span>Gloss add-on</span><span>$32</span></div>
-            <div className="flex justify-between border-t border-border pt-3 text-sm font-medium"><span>Wallet balance</span><span>$300</span></div>
-          </div>
-          <button className="mt-5 w-full rounded-xl bg-primary py-3 text-sm font-medium text-white">Pay from wallet</button>
-          <p className="mt-3 text-center text-xs text-text-muted">Lower-fee checkout, no front-desk scramble.</p>
-        </PhoneShell>
-      </div>
-    );
-  }
-
   if (type === "upsell") {
     return (
       <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
@@ -323,7 +306,7 @@ export default function JidokaLandingPage() {
             Less Stress, More Profit, Happier Clients
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            JIDOKA Cosmetics Operating System gives you an assistant for every obstacle- payments,
+            JIDOKA Cosmetics Operating System gives you an assistant for every obstacle- wallet checkout,
             inventory, payroll, marketing, reviews, and retention in one customizable platform.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -338,63 +321,8 @@ export default function JidokaLandingPage() {
         </div>
       </Section>
 
-      {/* Live branded demo — right under the hero CTAs */}
-      <Section className="mt-6">
-        <div className="mx-auto mb-8 max-w-2xl text-center">
-          <Eyebrow>Live branded demo</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">See it in your brand — every feature.</h2>
-          <p className="mt-4 leading-relaxed text-text-secondary">
-            Drop in your website or Instagram. We pull your logo, colors, and fonts, then walk you through
-            booking, wallet checkout, retail, the receptionist assistant, inventory, and the assistant hub — themed to you.
-          </p>
-        </div>
-        <BrandThemedDemo />
-        <div className="mx-auto mt-12 max-w-2xl text-center">
-          <Eyebrow>One System, Five Assistants</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An assistant for every obstacle.</h2>
-          <p className="mt-4 leading-relaxed text-text-secondary">
-            JIDOKA Cosmetics OS puts intelligent assistants on the work that drains your day — and lets you add,
-            remove, and customize each one to fit how your salon actually runs.
-          </p>
-        </div>
-        <AssistantRobotShowcase />
-      </Section>
-
-      <Section className="mt-16">
-        <div className="mx-auto mb-8 max-w-2xl text-center">
-          <Eyebrow>Client experience demo</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">What clients see when they book.</h2>
-          <p className="mt-4 leading-relaxed text-text-secondary">
-            Show your team the client side too: a simple booking flow that works on desktop and feels natural on a phone.
-          </p>
-        </div>
-        <ClientBookingDemo />
-      </Section>
-
-      {/* Built by salon owners */}
-      <Section className="mt-28">
-        <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-          <PhotoFrame caption="Founders / your team at work" ratioClass="aspect-[4/5]" className="max-w-md" />
-          <div>
-            <Eyebrow>Our story</Eyebrow>
-            <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
-              Built by salon owners,
-              <span className="block">for salon owners.</span>
-            </h2>
-            <p className="mt-5 leading-relaxed text-text-secondary">
-              We lived the 3% card fees, the missed calls during a color, and the juggling of ten tools that
-              never talked to each other. So we built the platform we wished we had — one that protects your
-              margin, fills your chairs, and feels as considered as the work you do.
-            </p>
-            <p className="mt-4 leading-relaxed text-text-secondary">
-              Every feature started as a problem on our own salon floor. Nothing here is theoretical.
-            </p>
-          </div>
-        </div>
-      </Section>
-
       {/* Bottlenecks */}
-      <Section className="mt-28">
+      <Section className="mt-12">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <Eyebrow>The daily grind</Eyebrow>
           <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
@@ -412,9 +340,44 @@ export default function JidokaLandingPage() {
             </div>
           ))}
         </div>
+        <div className="mt-8 flex justify-center">
+          <TrialButton />
+        </div>
       </Section>
 
-      {/* The OS — an assistant for every obstacle */}
+      {/* One system */}
+      <Section className="mt-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <Eyebrow>One System, Five Assistants</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">An assistant for every obstacle.</h2>
+          <p className="mt-4 leading-relaxed text-text-secondary">
+            JIDOKA Cosmetics OS puts intelligent assistants on the work that drains your day — and lets you add,
+            remove, and customize each one to fit how your salon actually runs.
+          </p>
+        </div>
+        <AssistantRobotShowcase />
+        <div className="mt-8 flex justify-center">
+          <TrialButton />
+        </div>
+      </Section>
+
+      {/* Live branded demo */}
+      <Section className="mt-24">
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <Eyebrow>Live branded demo</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">See it in your brand — every feature.</h2>
+          <p className="mt-4 leading-relaxed text-text-secondary">
+            Drop in your website or Instagram. We pull your logo, colors, and fonts, then walk you through
+            booking, wallet checkout, retail, the receptionist assistant, inventory, and the Assistants tab — themed to you.
+          </p>
+        </div>
+        <BrandThemedDemo />
+        <div className="mt-8 flex justify-center">
+          <TrialButton />
+        </div>
+      </Section>
+
+      {/* Assistants by operating area */}
       <Section className="mt-28">
         <div className="space-y-14">
           {PILLARS.map((pillar) => (
@@ -435,6 +398,9 @@ export default function JidokaLandingPage() {
             </div>
           ))}
         </div>
+        <div className="mt-10 flex justify-center">
+          <TrialButton />
+        </div>
       </Section>
 
       {/* Savings calculator */}
@@ -448,6 +414,9 @@ export default function JidokaLandingPage() {
         </div>
         <div className="mx-auto max-w-3xl">
           <SavingsCalculator />
+        </div>
+        <div className="mt-8 flex justify-center">
+          <TrialButton />
         </div>
       </Section>
 
@@ -487,12 +456,45 @@ export default function JidokaLandingPage() {
             explore the system, give feedback, and see where it saves time first.
           </p>
           <div className="mt-8 flex justify-center">
-            <a
-              href={SUBSCRIPTION_URL}
-              className="rounded-sm bg-gradient-brand px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-white transition-colors hover:opacity-90"
-            >
-              Start 7-day free trial
-            </a>
+            <TrialButton label="Start 7-day free trial" />
+          </div>
+        </div>
+      </Section>
+
+      {/* Built by salon owners */}
+      <Section className="mb-24">
+        <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
+          <PhotoFrame caption="Founders / your team at work" ratioClass="aspect-[4/5]" className="max-w-md" />
+          <div>
+            <Eyebrow>Our story</Eyebrow>
+            <h2 className="mt-3 font-serif text-3xl font-medium sm:text-4xl">
+              Built by salon owners,
+              <span className="block">for salon owners.</span>
+            </h2>
+            <p className="mt-5 leading-relaxed text-text-secondary">
+              We lived the 3% card fees, the missed calls during a color, and the juggling of ten tools that
+              never talked to each other. So we built the platform we wished we had — one that protects your
+              margin, fills your chairs, and feels as considered as the work you do.
+            </p>
+            <p className="mt-4 leading-relaxed text-text-secondary">
+              Every feature started as a problem on our own salon floor. Nothing here is theoretical.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a
+                href={CRYSTAL_CALENDLY_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-sm bg-gradient-brand px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+              >
+                Schedule a call with Crystal
+              </a>
+              <a
+                href="/about"
+                className="rounded-sm border border-text-primary/30 px-7 py-3.5 text-[12px] uppercase tracking-[0.14em] text-text-primary transition-colors hover:bg-black/[0.04]"
+              >
+                Read Crystal&apos;s story
+              </a>
+            </div>
           </div>
         </div>
       </Section>

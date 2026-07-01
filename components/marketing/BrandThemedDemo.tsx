@@ -49,14 +49,14 @@ const MODULES = [
     label: "Dashboard",
     title: "Your salon command center.",
     eyebrow: "Owner dashboard",
-    body: "The owner view Mark built: wallet, POS, store, openings, reviews, assistant reports, and the next best action for the day.",
+    body: "The owner view Mark built: wallet, store, openings, reviews, assistant reports, and the next best action for the day.",
   },
   {
     key: "wallet",
-    label: "Wallet & POS",
+    label: "Wallet",
     title: "Lower-fee checkout.",
-    eyebrow: "Payments",
-    body: "Client wallet loads, service payments, and in-salon retail checkout settle to the salon's own Stripe account.",
+    eyebrow: "Wallet checkout",
+    body: "Client wallet loads, service checkout, and in-salon retail checkout settle to the salon's own Stripe account.",
   },
   {
     key: "store",
@@ -68,8 +68,8 @@ const MODULES = [
   {
     key: "assistants",
     label: "Assistants",
-    title: "Five assistants, one command center.",
-    eyebrow: "Assistant hub",
+    title: "Assistant workspace.",
+    eyebrow: "Assistants",
     body: "Chat with each assistant, review reports, see the latest data, and skim one-page executive summaries without jumping between tools.",
   },
 ] as const;
@@ -90,7 +90,7 @@ const ASSISTANTS = [
     label: "Inventory Assistant",
     metric: "4 low-stock items",
     status: "2 reorder drafts",
-    report: "Lash adhesive and toner 7N are below threshold. Gloss trays are healthy for six weeks based on recent POS movement.",
+    report: "Lash adhesive and toner 7N are below threshold. Gloss trays are healthy for six weeks based on recent checkout movement.",
     messages: ["Which products need attention today?", "Lash adhesive first. It is below threshold and used faster than forecast this week."],
   },
   {
@@ -120,6 +120,7 @@ const ASSISTANTS = [
 ] as const;
 
 type AssistantKey = (typeof ASSISTANTS)[number]["key"];
+type ChatTurn = { assistantKey: AssistantKey; sender: "user" | "assistant"; text: string };
 
 function initials(name: string): string {
   const parts = name.replace(/[\[\]]/g, "").trim().split(/\s+/).filter(Boolean);
@@ -192,6 +193,31 @@ function ModulePreview({
   allowWalletTips: boolean;
   setAllowWalletTips: (value: boolean) => void;
 }) {
+  const activeAssistant = ASSISTANTS.find((assistant) => assistant.key === assistantKey) ?? ASSISTANTS[0];
+  const [chatInput, setChatInput] = useState("");
+  const [chatTurns, setChatTurns] = useState<ChatTurn[]>([]);
+  const visibleTurns = [
+    { assistantKey: activeAssistant.key, sender: "user" as const, text: activeAssistant.messages[0] },
+    { assistantKey: activeAssistant.key, sender: "assistant" as const, text: activeAssistant.messages[1] },
+    ...chatTurns.filter((turn) => turn.assistantKey === activeAssistant.key),
+  ];
+
+  function sendMessage(e: React.FormEvent) {
+    e.preventDefault();
+    const text = chatInput.trim();
+    if (!text) return;
+    setChatTurns((turns) => [
+      ...turns,
+      { assistantKey: activeAssistant.key, sender: "user", text },
+      {
+        assistantKey: activeAssistant.key,
+        sender: "assistant",
+        text: `${activeAssistant.label} received that. In the full platform, I would pull your live data, create the report, and give you the next action.`,
+      },
+    ]);
+    setChatInput("");
+  }
+
   if (moduleKey === "wallet") {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[0.85fr_1fr]">
@@ -214,7 +240,7 @@ function ModulePreview({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-medium text-text-primary">Allow wallet tips</p>
-                <p className="mt-1 text-xs text-text-muted">Owner checkout rule for client wallet payments.</p>
+                <p className="mt-1 text-xs text-text-muted">Owner checkout rule for client wallet checkout.</p>
               </div>
               <button
                 type="button"
@@ -262,9 +288,8 @@ function ModulePreview({
   }
 
   if (moduleKey === "assistants") {
-    const active = ASSISTANTS.find((assistant) => assistant.key === assistantKey) ?? ASSISTANTS[0];
     return (
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[0.78fr_1.22fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
         <div className="border border-border bg-white p-3">
           <div className="grid grid-cols-1 gap-1">
             {ASSISTANTS.map((assistant) => {
@@ -274,7 +299,7 @@ function ModulePreview({
                   key={assistant.key}
                   type="button"
                   onClick={() => setAssistantKey(assistant.key)}
-                  className="border px-3 py-2 text-left text-xs transition-colors"
+                  className="border px-3 py-3 text-left text-xs transition-colors"
                   style={
                     selected
                       ? { borderColor: accent, color: accent, backgroundColor: "#fff" }
@@ -288,25 +313,48 @@ function ModulePreview({
             })}
           </div>
         </div>
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="border border-border bg-white p-4">
+        <div className="min-w-0 space-y-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
+            <div className="min-w-0 border border-border bg-white p-4">
               <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Signal</p>
-              <p className="mt-2 font-serif text-xl font-medium">{active.metric}</p>
+              <p className="mt-2 break-words font-serif text-2xl font-medium leading-tight">{activeAssistant.metric}</p>
             </div>
-            <div className="border border-border bg-white p-4 sm:col-span-2">
+            <div className="min-w-0 border border-border bg-white p-4">
               <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">One-page exec</p>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{active.report}</p>
+              <p className="mt-2 break-words text-sm leading-relaxed text-text-secondary">{activeAssistant.report}</p>
             </div>
           </div>
           <div className="border border-border bg-white p-4">
             <p className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Chat</p>
-            <div className="mt-3 space-y-2">
-              <p className="max-w-[85%] rounded-xl bg-surface-elevated px-3 py-2 text-sm text-text-primary">{active.messages[0]}</p>
-              <p className="ml-auto max-w-[85%] rounded-xl px-3 py-2 text-sm text-white" style={{ backgroundColor: accent }}>
-                {active.messages[1]}
-              </p>
+            <div className="mt-3 max-h-[280px] space-y-2 overflow-y-auto pr-1">
+              {visibleTurns.map((turn, index) => (
+                <p
+                  key={`${turn.sender}-${index}-${turn.text}`}
+                  className={`max-w-[88%] break-words rounded-xl px-3 py-2 text-sm leading-relaxed ${
+                    turn.sender === "assistant" ? "ml-auto text-white" : "bg-surface-elevated text-text-primary"
+                  }`}
+                  style={turn.sender === "assistant" ? { backgroundColor: accent } : undefined}
+                >
+                  {turn.text}
+                </p>
+              ))}
             </div>
+            <form onSubmit={sendMessage} className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder={`Message ${activeAssistant.label}`}
+                aria-label={`Message ${activeAssistant.label}`}
+                className="min-w-0 flex-1 rounded-md border border-border bg-white px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary"
+              />
+              <button
+                type="submit"
+                className="rounded-md px-4 py-2.5 text-sm font-medium text-white"
+                style={{ backgroundColor: accent }}
+              >
+                Send
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -438,26 +486,30 @@ export default function BrandThemedDemo() {
           </div>
 
           <div className="p-5 sm:p-8">
-            <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">{activeModule.eyebrow}</p>
-            <div className="mt-3 grid grid-cols-1 gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-start">
-              <div>
-                <h3 className="font-serif text-4xl font-medium tracking-tight">{activeModule.title}</h3>
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-text-secondary">{activeModule.body}</p>
-                <div className="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-sm border border-border bg-border">
-                  {[
-                    ["Booked", "87%"],
-                    ["Wallet saved", "$412"],
-                    ["Alerts", "4"],
-                  ].map(([label, value]) => (
-                    <div key={label} className="bg-surface-elevated p-3 text-center">
-                      <p className="text-[11px] text-text-muted">{label}</p>
-                      <p className="mt-1 font-serif text-xl font-medium" style={label === "Wallet saved" ? { color: accent } : undefined}>
-                        {value}
-                      </p>
-                    </div>
-                  ))}
+            {moduleKey !== "assistants" && (
+              <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">{activeModule.eyebrow}</p>
+            )}
+            <div className={moduleKey === "assistants" ? "mt-0" : "mt-3 grid grid-cols-1 gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-start"}>
+              {moduleKey !== "assistants" && (
+                <div>
+                  <h3 className="font-serif text-4xl font-medium tracking-tight">{activeModule.title}</h3>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-text-secondary">{activeModule.body}</p>
+                  <div className="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-sm border border-border bg-border">
+                    {[
+                      ["Booked", "87%"],
+                      ["Wallet saved", "$412"],
+                      ["Alerts", "4"],
+                    ].map(([label, value]) => (
+                      <div key={label} className="bg-surface-elevated p-3 text-center">
+                        <p className="text-[11px] text-text-muted">{label}</p>
+                        <p className="mt-1 font-serif text-xl font-medium" style={label === "Wallet saved" ? { color: accent } : undefined}>
+                          {value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <ModulePreview
                 moduleKey={moduleKey}
                 accent={accent || primary}
