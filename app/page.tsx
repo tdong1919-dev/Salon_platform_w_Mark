@@ -110,7 +110,7 @@ const CLIENT_NOTIFICATIONS = [
 ];
 
 const SUBSCRIPTION_URL = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_URL || "/settings/stripe";
-const CRYSTAL_CALENDLY_URL = process.env.NEXT_PUBLIC_CRYSTAL_CALENDLY_URL || "https://calendly.com/crystalthuydong";
+const CRYSTAL_CALENDLY_URL = process.env.NEXT_PUBLIC_CRYSTAL_CALENDLY_URL || "https://calendly.com/hello-barebranding/30min";
 
 function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   return <section id={id} className={`max-w-6xl mx-auto px-5 ${className}`}>{children}</section>;
