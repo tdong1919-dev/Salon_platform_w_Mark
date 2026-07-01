@@ -75,7 +75,7 @@ export default function AboutPage() {
       </Section>
 
       <Section className="pb-24">
-        <div className="rounded-lg border border-border bg-white p-8 sm:p-12">
+        <div className="rounded-lg border border-border bg-white p-8 text-center sm:p-12">
           <a
             href="https://jidokagroup.com"
             target="_blank"
@@ -92,6 +92,19 @@ export default function AboutPage() {
               priority={false}
             />
           </a>
+          <div className="mx-auto mt-8 max-w-2xl space-y-4 text-sm leading-relaxed text-text-secondary">
+            <p>
+              JIDOKA Group exists to help founders make their businesses more efficient, competitive, and profitable
+              without losing the human judgment that makes their work matter. JIDOKA Cosmetics OS is one expression
+              of that mission for salons, spas, medspas, and cosmetic businesses: an operating system that uses
+              automation and assistants to remove the daily pressure points that keep owners stuck in the weeds.
+            </p>
+            <p>
+              The goal is not to replace people with software. It is to give founders and teams the systems,
+              visibility, and implementation support they need so the business can work for them, while they stay
+              connected to the life and work they actually want to build.
+            </p>
+          </div>
         </div>
       </Section>
     </main>
