@@ -180,21 +180,58 @@ function PhoneShell({ children }: { children: React.ReactNode }) {
 
 function FloatingCuePhone() {
   return (
-    <div className="floating-phone-wrap mx-auto w-full max-w-[290px]">
-      <PhoneShell>
-        <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Team cues</p>
-        <h4 className="mt-2 font-serif text-2xl font-medium">Next best action</h4>
-        <div className="mt-5 space-y-3">
-          {TEAM_CUES.map((cue, index) => (
-            <div key={cue} className="cue-notification rounded-2xl border border-border bg-surface-elevated p-3 shadow-sm" style={{ animationDelay: `${index * 0.55}s` }}>
-              <div className="flex items-start gap-2">
-                <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-success" />
-                <p className="text-sm leading-relaxed text-text-secondary">{cue}</p>
+    <div className="inventory-phone-stage relative mx-auto flex min-h-[520px] w-full max-w-[560px] items-center justify-center overflow-visible py-5">
+      <div className="floating-phone-wrap relative z-10 w-full max-w-[270px] rounded-[34px] border-[8px] border-text-primary bg-text-primary shadow-sm">
+        <div className="owner-phone-screen min-h-[490px] rounded-[25px] bg-white p-4">
+          <div className="mx-auto mb-5 h-1.5 w-16 rounded-full bg-border" />
+          <div className="rounded-2xl border border-border bg-white/80 p-4 shadow-sm backdrop-blur-sm">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Owner dashboard</p>
+            <h4 className="mt-2 font-serif text-2xl font-medium">Today&apos;s floor</h4>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-white p-3 shadow-sm">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-muted">Openings</p>
+                <p className="mt-1 font-serif text-2xl font-medium">2</p>
+              </div>
+              <div className="rounded-xl bg-white p-3 shadow-sm">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-text-muted">Low stock</p>
+                <p className="mt-1 font-serif text-2xl font-medium">4</p>
               </div>
             </div>
-          ))}
+            <div className="mt-4 rounded-xl bg-white p-3 shadow-sm">
+              <div className="flex items-end gap-1.5">
+                {[42, 58, 35, 70, 62, 84].map((height, index) => (
+                  <span
+                    key={height + index}
+                    className="w-full rounded-t bg-success/70"
+                    style={{ height: `${height}px` }}
+                  />
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-text-muted">Service demand forecast</p>
+            </div>
+          </div>
+          <div className="mt-4 space-y-2">
+            {["Reorder lash adhesive", "Approve review reply", "Fill 2:30 PM opening"].map((task) => (
+              <div key={task} className="rounded-xl border border-border bg-white/75 px-3 py-2 text-xs text-text-secondary shadow-sm">
+                {task}
+              </div>
+            ))}
+          </div>
         </div>
-      </PhoneShell>
+      </div>
+
+      {TEAM_CUES.map((cue, index) => (
+        <div
+          key={cue}
+          className={`cue-popout cue-popout-${index + 1} absolute z-20 w-[min(310px,82vw)] rounded-2xl border border-border bg-white px-4 py-3 shadow-sm`}
+          style={{ animationDelay: `${index * 0.5}s` }}
+        >
+          <div className="flex items-start gap-2">
+            <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-success" />
+            <p className="text-sm leading-relaxed text-text-secondary">{cue}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -202,7 +239,7 @@ function FloatingCuePhone() {
 function PillarVisual({ type }: { type: PillarVisualType }) {
   if (type === "upsell") {
     return (
-      <div className="mt-5 rounded-md border border-border bg-surface-elevated p-5">
+      <div className="overflow-visible">
         <FloatingCuePhone />
       </div>
     );
@@ -256,7 +293,7 @@ function PillarVisual({ type }: { type: PillarVisualType }) {
     <div className="mt-5 grid grid-cols-1 items-center gap-5 rounded-md border border-border bg-surface-elevated p-5 md:grid-cols-[0.8fr_1fr]">
       <PhoneShell>
         <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted">Client dashboard</p>
-        <h4 className="mt-2 font-serif text-2xl font-medium">Welcome Back [Jasmine]</h4>
+        <h4 className="mt-2 font-serif text-2xl font-medium">Welcome Back Jasmine</h4>
         <div className="mt-5 space-y-3">
           {CLIENT_NOTIFICATIONS.map((notice, index) => (
             <div key={notice} className="rounded-2xl border border-border bg-surface-elevated p-3">
@@ -386,15 +423,31 @@ export default function JidokaLandingPage() {
                 <h3 className="font-serif text-2xl font-medium">{pillar.name}</h3>
                 <span className="h-px flex-1 bg-border" />
               </div>
-              <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
-                {pillar.items.map((item) => (
-                  <div key={item.title} className="bg-surface p-6">
-                    <h4 className="font-serif text-xl font-medium">{item.title}</h4>
-                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">{item.body}</p>
+              {pillar.visual === "upsell" ? (
+                <div className="grid grid-cols-1 items-center gap-8 overflow-visible lg:grid-cols-[0.9fr_1.1fr]">
+                  <div className="grid grid-cols-1 gap-3">
+                    {pillar.items.map((item) => (
+                      <div key={item.title} className="rounded-md border border-border bg-surface p-6">
+                        <h4 className="font-serif text-xl font-medium">{item.title}</h4>
+                        <p className="mt-2 text-sm leading-relaxed text-text-secondary">{item.body}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <PillarVisual type={pillar.visual} />
+                  <PillarVisual type={pillar.visual} />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+                    {pillar.items.map((item) => (
+                      <div key={item.title} className="bg-surface p-6">
+                        <h4 className="font-serif text-xl font-medium">{item.title}</h4>
+                        <p className="mt-2 text-sm leading-relaxed text-text-secondary">{item.body}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <PillarVisual type={pillar.visual} />
+                </>
+              )}
             </div>
           ))}
         </div>

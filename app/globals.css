@@ -185,9 +185,34 @@ body {
   animation: floating-phone 4.8s ease-in-out infinite;
 }
 
+.owner-phone-screen {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(75, 122, 99, 0.12), transparent 26%),
+    linear-gradient(145deg, #FFFFFF 0%, #F6F2EC 100%);
+}
+
 .cue-notification {
   animation: cue-pop 3.6s ease-in-out infinite;
   transform-origin: 50% 20%;
+}
+
+.cue-popout {
+  animation: cue-popout 4.2s ease-in-out infinite;
+}
+
+.cue-popout-1 {
+  top: -2px;
+  left: -18px;
+}
+
+.cue-popout-2 {
+  top: 238px;
+  right: -36px;
+}
+
+.cue-popout-3 {
+  bottom: 46px;
+  left: 12px;
 }
 
 @keyframes floating-phone {
@@ -198,4 +223,22 @@ body {
 @keyframes cue-pop {
   0%, 100% { opacity: 0.78; transform: translateY(4px) scale(0.98); }
   35%, 72% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cue-popout {
+  0%, 100% { opacity: 0.82; transform: translateY(8px) scale(0.98); }
+  35%, 72% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 767px) {
+  .cue-popout {
+    position: relative;
+    inset: auto;
+    margin: 10px auto 0;
+  }
+
+  .inventory-phone-stage {
+    display: block;
+    min-height: auto;
+  }
 }
